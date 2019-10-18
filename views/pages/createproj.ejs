@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<HTML>
+    <head>
+        <% include ../partials/header.ejs %>
+    </head>
+        <body>
+            <h5 class="modal-title" id="exampleModalLabel" >Create Project</h5>
+            <form action="newproj" method="POST">
+            <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="">Project Title</span>
+                    </div>
+                    <input type="text" class="form-control" name="pid" required>
+                    </div>
+            <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="">Product</span>
+                        </div>
+                        <select class="custom-select" id="inputGroupSelect01" name="selectedproduct" required>
+                                <option value="">Choose Product...</option>
+                                <%for(x=0;x<productlist.length;x++){%>
+                                      <option value=<%= productlist[x].Product_Id %>><%= productlist[x].Product_name %></option>      
+                                  <%}%>
+                            </select>
+                        </div>
+            <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="">Quantity</span>
+                        </div>
+                        <input type="text" class="form-control" name="quantity" required>
+                        </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="">Select Deadline: </span>
+                            <div id="datepicker" class="input-group date" data-date-format="mm-dd-yyyy">
+                              <input class="form-control" type="text" name="date" readonly required/>
+                              <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                        </div>
+                    </div>
+                </div> 
+                <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                          <label class="input-group-text" for="inputGroupSelect01">Production</label>
+                        </div>
+                        <select class="custom-select" id="inputGroupSelect01" name="selectedprod" required>
+                          <option value="">Choose Employer...</option>
+                          <%for(x=0;x<prod.length;x++){%>
+                                <option value=<%= prod[x].Emp_id %>><%= prod[x].Emp_name %></option>      
+                            <%}%>
+                        </select>
+                       
+                      </div>
+                <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="inputGroupSelect01">It Department</label>
+                            </div>
+                            <select class="custom-select" id="inputGroupSelect01" name="selectedit" required>
+                              <option value="">Choose Employer...</option>
+                              <%for(x=0;x<it.length;x++){%>
+                                    <option value=<%= it[x].Emp_id %>><%= it[x].Emp_name %></option>      
+                                <%}%>
+                            </select>
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text" for="inputGroupSelect01">Mass Production</label>
+                                </div>
+                                <select class="custom-select" id="inputGroupSelect01" name="selectedmass" required>
+                                  <option value="">Choose Employer...</option>
+                                  <%for(x=0;x<mass.length;x++){%>
+                                        <option value=<%= mass[x].Emp_id %>><%= mass[x].Emp_name %></option>            
+                                    <%}%>
+                                </select>
+                            </div>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="inputGroupSelect01">Quality Assurance</label>
+                                </div>
+                                <select class="custom-select" id="inputGroupSelect01" name="selectedquality" required>
+                                    <option value="">Choose Employer...</option>
+                                    <%for(x=0;x<quality.length;x++){%>
+                                            <option value=<%= quality[x].Emp_id %>><%= quality[x].Emp_name %></option>      
+                                        <%}%>
+                                </select>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="inputGroupSelect01">Testing Department</label>
+                                        </div>
+                                        <select class="custom-select" id="inputGroupSelect01" name="selectedtest" required>
+                                        <option value="">Choose Employer...</option>
+                                        <%for(x=0;x<test.length;x++){%>
+                                                <option value=<%= test[x].Emp_id %>><%= test[x].Emp_name %></option>      
+                                            <%}%>
+                                        </select>
+                                    </div>
+                                <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text" for="inputGroupSelect01">Shipment Department</label>
+                                        </div>
+                                            <select class="custom-select" id="inputGroupSelect01" name="selectedship" required>
+                                            <option value="">Choose Employer...</option>
+                                            <%for(x=0;x<ship.length;x++){%>
+                                                    <option value=<%= ship[x].Emp_id %>><%= ship[x].Emp_name %></option>      
+                                                <%}%>
+                                            </select>
+                                    </div>        
+                                 <button class="btn btn-primary" type="submit"> Submit</button>
+                            </form>
+
+
+        </body>
+        <script>
+         $(document).ready(function() {
+        $("#datepicker").datepicker({ 
+            autoclose: true, 
+            startDate: new Date(),
+            todayHighlight: true,
+            formatSubmit: 'yyyy/mm/dd',
+            daysOfWeekDisabled:[0,6], 
+        });
+    });
+    </script>
+</HTML>

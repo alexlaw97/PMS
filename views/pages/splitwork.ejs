@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <% include ../partials/header.ejs %>
+        <title>Split Work Page</title>
+    </head>
+    <body>
+        <div>
+        <form action = "/update/id" method = "POST">
+        <h7 class="sp1">Choose Employer</h7>
+        <div class="input-group mb-3">
+            <div class="form-group">
+                <select class="form-control" name="selected">
+                    <%for(x=0;x<empl.length;x++){%>
+                            <option value=<%= empl[x].Emp_id %>><%= empl[x].Emp_name %></option>      
+                        <%}%>
+                    
+                    </select>
+              </div>
+            <div class="input-group-append-sm">
+              <button class="btn btn-outline-secondary"  type="submit" id="button-addon2">Choose</button>
+            </div>
+            <input type="hidden" id="projid" name="id"/>
+        </form>
+    </div>
+    <table id="emp_tbl" class="table table-borderd table-striped" align="center">
+        <thead>
+          <th>Employer name</th>
+          <th>Position</th>
+          <th>Tasks number</th>
+        </thead>
+        <tbody>
+          <%for(x=0;x<empl.length;x++){%>
+
+                <tr><td><%= empl[x].Emp_name %></td>
+                <td><%= empl[x].Position %></td>
+                <td><%= tsk[x].Total_tasks %></td>
+          <%}%>
+          </tbody>
+        </table>
+    <script>
+   function chkid() 
+    {
+        var inp = document.getElementById("id").value;
+        console.log(inp);
+    }
+
+    $(document).ready(function() {
+            $('#emp_tbl').DataTable();
+            var id = localStorage.getItem("project");
+            console.log(id);
+            document.getElementById("projid").value=id;
+
+        
+            // console.log(check);
+        } );
+    
+    </script>
+    </body>
+</html>

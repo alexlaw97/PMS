@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../partials/header.ejs %>
+</head>
+
+<body>
+  
+  <!-- <div>
+    <button type="button" class="btn btn-primary" id="btnbtn" data-toggle="modal" data-target="#newprojmodal">Create Project</button>
+    </div> -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="newprojmodal" tabindex="-1" role="dialog"  aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel" >Create Project</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form action="/newproj" method="POST">
+              <div class="input-group">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="">Project Title</span>
+                  </div>
+                  <input type="text" class="form-control" name="pid">
+                </div>
+              </div>
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="">Select Deadline: </span>
+                  <div id="datepicker" class="input-group date" data-date-format="mm-dd-yyyy">
+                      <input class="form-control" type="text" name="date" readonly />
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                  </div>
+                </div>
+              </div>  
+          </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+        </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="table table-striped" id="proj_table" align="center">
+      <!-- Search form -->
+      <div id="search_project" align="center"></div>
+        <table id="proj_tbl"  >
+          <thead>
+            <th>Project Id</th>
+            <th>Project Title</th>
+            <th>Status</th>
+            <th>Assigned to</th>
+            <th>Action</th>
+          </thead>
+          <tbody>    
+            <%for(x=0;x<project.length;x++){%>
+            <tr><td><%= project[x].Project_id %></td>
+            <td><%= project[x].Project_title %></td>
+            <td><%= project[x].Status %></td>
+            <!-- If Employer Id was found  -->
+              <% for(z=0;z<employer.length;z++){ %>
+              <% if(employer[z].Emp_id == project[x].Production || employer[z].Emp_id == project[x].IT_Dept || employer[z].Emp_id == project[x].Testing_Dept || employer[z].Emp_id == project[x].Mass_Dept || employer[z].Emp_id == project[x].Ship_Dept){ %>
+              <td><%= employer[z].Emp_name %></td>
+              <td><button class="btn btn-primary btn-block" type="submit" onclick="getprojid('<%= project[x].Project_id  %>')">Change Employer </button> </td>
+              <%}else{%>
+                  <td></td>
+                  <td><button class="btn btn-primary btn-block" type="submit" onclick="getprojid('<%= project[x].Project_id  %>')">Change Employer </button> </td>
+                <%}%>
+              <%}%>
+            </tr>
+            <%}%>
+            
+            </tbody>
+          </table>
+        </div>
+      </body>
+    
+    
+    <script>
+
+    $(document).ready(function() {
+        $("#datepicker").datepicker({ 
+              autoclose: true, 
+              startDate: new Date(),
+              todayHighlight: true,
+              formatSubmit: 'yyyy/mm/dd',
+              daysOfWeekDisabled:[0,6], 
+        });
+
+        $('#proj_tbl').DataTable({
+          "lengthChange": false,
+          initComplete : function() {
+            $("#proj_tbl_filter").detach().appendTo('#search_project');
+        }
+        });
+    } );
+
+function getprojid(id){
+  localStorage.setItem("project",id);
+  window.location.href="split"
+}
+</script>
+</html>

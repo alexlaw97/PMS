@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <% include ../partials/header.ejs %>
+    </head>
+    <body>
+        <div class="container">
+            <h2 style="text-align: center">Testing Phase</h2>
+                    <div class="table table-striped" id="proj_table" align="center">
+                            <!-- Search form -->
+                            <div id="search_project" align="center"></div>
+                              <table id="proj_tbl"  >
+                                <thead>
+                                  <th>Project Id</th>
+                                  <th>Project Title</th>
+                                  <th>Action</th>                   
+                                </thead>
+                                <tbody>    
+                                  <%for(x=0;x<project.length;x++){%>
+                                  <tr>
+                                  <form action="status" method="POST">
+                                  <td><input class="form-control-plaintext" type="text" name="projectid" value="<%= project[x].Project_id %>" readonly></td>
+                                  <td><%= project[x].Project_title %></td>
+                                  <td><button class="btn btn-primary" type="submit" value="yes" name="res"><i class="fas fa-check"></i> </button> <button class="btn btn-danger " type="submit" value="no" name="res"><i class="fas fa-times"> </button></td>
+                                  </form>
+                                </tr>
+                                    <%}%>
+                                  </tbody>
+                                </table>
+                              </div>
+                              </div>
+                            </body>          
+                          <script>
+                          $(document).ready(function() {
+                              $('#proj_tbl').DataTable({
+                            
+                              });
+                          });   
+           </script>
+</html>
