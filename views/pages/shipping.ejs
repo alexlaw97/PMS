@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <% include ../partials/header.ejs %>
+    </head>
+    <body>
+        <div class="container">
+            <h2 style="text-align: center">Shipment Phase</h2>
+                    <div class="table table-striped" id="proj_table" align="center">
+                            <!-- Search form -->
+                            <div id="search_project" align="center"></div>
+                              <table id="proj_tbl"  >
+                                <thead>
+                                  <th>Project Id</th>
+                                  <th>Project Title</th>
+                                  <th>Action</th>                   
+                                </thead>
+                                <tbody>    
+                                  <%for(x=0;x<project.length;x++){%>
+                                    <%for(x=0;x<projdealer.length;x++){%>
+                                          <tr>
+                                          <form action="status" method="POST">
+                                          <td><input class="form-control-plaintext" type="text" name="projectid" value="<%= project[x].Project_id %>" readonly></td>
+                                          <td><%= project[x].Project_title %></td>
+                                          <td><button type="button" class="btn btn-primary" id="btn" data-toggle="modal" data-target="#myModal" data-title = "<%= project[x].Project_title %>" data-deal = "<%= projdealer[x].Name %>" data-address = "<%= projdealer[x].Address %>" data-phone = "<%= projdealer[x].Phone %>" >Open modal</button></td>
+                                          </form>
+                                        </tr>
+                                      <%}%>
+                                    <%}%>
+                                    </tbody>
+                                  </table>
+                                </div>
+                                </div>
+
+                              <!-- The Modal -->
+                              <div class="modal" id="myModal">
+                                <div class="modal-dialog">
+                                  <div class="modal-content">
+
+                                    <!-- Modal Header -->
+                                    <div class="modal-header">
+                                      <h4 class="modal-title">Modal Heading</h4>
+                                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+
+                                    <!-- Modal body -->
+                                    <div class="modal-body">
+                                              <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="">Project Title</span>
+                                                    </div>
+                                                    <input class="form-control" type="text" id="title" readonly>
+                                                  </div>
+                                                  <div class="input-group mb-3">
+                                                      <div class="input-group-prepend">
+                                                          <span class="input-group-text" id="">Dealer  Name</span>
+                                                          </div>
+                                                          <input class="form-control" type="text" id="name" readonly>
+                                                        </div> 
+                                                        <div class="input-group mb-3">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text" >Dealer Address</span>
+                                                                </div>
+                                                                <textarea class="form-control" id="address" readonly></textarea>
+                                                              </div>
+                                                              <div class="input-group mb-3">
+                                                                  <div class="input-group-prepend">
+                                                                      <span class="input-group-text" >Dealer Phone Number</span>
+                                                                      </div>
+                                                                      <input class="form-control" type="text" id="phone" readonly>
+                                                                    </div>        
+                                    </div>
+                                    <!-- Modal footer -->
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                    </div>
+
+                                  </div>
+                                </div>
+                              </div>
+                            </body>        
+                          <script>
+                          $(document).ready(function() {
+                              $('#proj_tbl').DataTable({
+                            
+                              });
+                              autosize(document.getElementById("address"));
+                          });  
+                          $(document).on("click", "#btn", function () {
+                              var projecttitle = $(this).data('title');
+                              var dealer = $(this).data('deal');
+                              var addres = $(this).data('address');
+                              var phonenumber = $(this).data('phone');
+                              $("#title").val(projecttitle);
+                              $("#name").val( dealer); 
+                              $(" #address").val(addres);
+                              $("#phone").val(phonenumber);
+                          });
+                          
+               </script>
+</html>

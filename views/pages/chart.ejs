@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../partials/header.ejs %>
+  <link rel="stylesheet" type="text/css" href="/stylesheets/chart.css">
+  <title>Chart Page</title>
+</head>
+
+<body>
+    <div class="chart-outer">
+        <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+        <div class="checkbox" style="text-align:center;">
+            <input type="checkbox"checked data-toggle="toggle" data-on="Datatable" data-off="Close" data-onstyle="success" data-offstyle="danger" onchange="toggleDataTable()">
+            <!-- <button onclick="toggleDataTable()">Toggle Datatable</button> -->
+        </div>
+    </div>
+</body>
+    <script>
+        var phase = ["Phase 1" , "Phase 2" , "Phase 3" , "Phase 4" , "Phase 5"]
+        var averages = [];
+        var project = [];
+        var avgvalue, curvalue;
+         //  Looping the average data from database anbd push into and array 
+         ' <%for(x=0;x<average.length;x++){%>'
+                avgvalue = parseInt('<%= average[x] %>');
+                averages.push(avgvalue);
+                             '<%}%>'
+         //  Looping the current project data from database anbd push into and array 
+         ' <%for(x=0;x<current.length;x++){%>'
+                curvalue = parseInt('<%= current[x] %>');
+                project.push(curvalue);
+                             '<%}%>'
+        Highcharts.chart('container', {
+            exporting: {
+                enabled: false
+            },
+            chart: {
+                type: 'spline'
+            },
+            title: {
+                text: 'Usage Time Of Each Phase'
+            },
+            subtitle: {
+                text: 'Comparing Between Average Time and Current Project Time'
+            },
+            xAxis: {
+                categories: phase
+            },
+            yAxis: {
+                title: {
+                text: 'Time Usage'
+                },
+                labels: {
+                formatter: function() {
+                    return this.value + ' days';
+                }
+                }
+            },
+            tooltip: {
+                crosshairs: true,
+                shared: true
+            },
+            plotOptions: {
+                spline: {
+                marker: {
+                    radius: 4,
+                    lineColor: '#666666',
+                    lineWidth: 1
+                }
+                }
+            },
+            series: [{
+                name: 'Average Project  (days)',
+                marker: {
+                symbol: 'square'
+                },
+                data: averages
+
+            }, {
+                name: 'Current Project  (days)',
+                marker: {
+                symbol: 'diamond'
+                },
+                data: project
+            }],
+            credits: {
+                enabled: false
+            },
+            });
+            function toggleDataTable() {
+                var chart = $('#container').highcharts()
+                if (chart.options.exporting.showTable) {
+                var element = document.getElementById("highcharts-data-table-0");
+                element.parentNode.removeChild(element);
+                }
+                chart.update({
+                exporting: {
+                    showTable: !chart.options.exporting.showTable
+                }
+                });
+            }
+    </script>
+</html>

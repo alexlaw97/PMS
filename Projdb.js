@@ -24,7 +24,8 @@ var projSchema = new mongoose.Schema({
     Pros_id:String,
     Req_id:String,
     Product_id: String,
-    Quantity: String
+    Quantity: String,
+    Dealer : String
 
 })
 

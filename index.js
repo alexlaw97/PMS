@@ -40,49 +40,60 @@ app.get('/',(req, res) => {
 app.get('/projmng' , loginSession, (req, res) => {
   var emp = require('./Empdb');
   var product = require('./prodDb');
+  var add = require('./deaDb');
   emp.find({
-    "Department" : "Production"
+    "Department" : "Production",
+    "Position" : "Senior"
   })
   .then((response) => {
     emp.find({
-      "Department" : "IT"
+      "Department" : "IT",
+      "Position" : "Senior"
     })
     .then((response2) => {
       emp.find({
-        "Department" : "Testing"
+        "Department" : "Testing",
+        "Position" : "Senior"
       })
       .then((response3) => {
         emp.find({
-          "Department" : "Shipment"
+          "Department" : "Shipment",
+          "Position" : "Senior"
         })
         .then((response4) => {
           emp.find({
-            "Department" : "Mass"
+            "Department" : "Mass",
+            "Position" : "Senior"
           })
           .then((response5) => {
             emp.find({
-              "Department" : "Quality Assurance"
+              "Department" : "Quality Assurance",
+              "Position" : "Senior"
             })
-          .then ((response6) => {
-            product.find({})
-            .then((response7) => {
-              res.render("pages/createproj", {
-                productlist : response7,
-                prod : response,
-                it : response2,
-                test : response3,
-                ship : response4,
-                mass : response5,
-                quality :response6
-                })
-              }) 
+            .then((response6) => {
+              add.find({})
+            .then ((response7) => {
+              console.log(response7);
+              product.find({})
+              .then((response8) => {
+                res.render("pages/createproj", {
+                  productlist : response8,
+                  prod : response,
+                  it : response2,
+                  test : response3,
+                  ship : response4,
+                  mass : response5,
+                  quality :response6,
+                  dealers : response7
+                  })
+                }) 
+              })
             })
           })
         })
       })
-    })
-  }) 
- 
+    }) 
+  })
 });
 
 //Insert new proj
@@ -99,62 +110,62 @@ app.post('/newproj' , (req, res) => {
   .sort({"_id":-1})
   .limit(1)
   .then((response) => {
-    projid = response[0].Project_id;
-    projid++;
-    proj = new insproj({
-      Project_id : projid,
-      Project_title: req.body.pid,
-      Product_Id : req.body.selectedproduct,
-      Deadline : req.body.date,
-      Status : "Installation Phase",
-      Pros_id : projid,
-      Req_id : projid,
-      Production : req.body.selectedprod,
-      IT_Dept : req.body.selectedit,
-      Testing_Dept : req.body.selectedtest,
-      Mass_Dept : req.body.selectedmass,
-      Quality_Dept : req.body.selectedquality,
-      Ship_Dept : req.body.selectedship,
-      Quantity : req.body.quantity,
-      Ins_start : date,
-      Ins_end : "",
-      //Soft_start: "",
-      Soft_end: "",
-      //mass_start: "",
-      mass_end: "",
-      //quality_start: "",
-      quality_end: "",
-      //testing_start: "",
-      testing_end: "",
-      //ship_start: "",
-      ship_end: ""
-    })
+      projid = response[0].Project_id;
+      projid++;
+      proj = new insproj({
+        Project_id : projid,
+        Project_title: req.body.pid,
+        Product_Id : req.body.selectedproduct,
+        Deadline : req.body.date,
+        Status : "Installation Phase",
+        Pros_id : projid,
+        Req_id : projid,
+        Production : req.body.selectedprod,
+        IT_Dept : req.body.selectedit,
+        Testing_Dept : req.body.selectedtest,
+        Mass_Dept : req.body.selectedmass,
+        Quality_Dept : req.body.selectedquality,
+        Ship_Dept : req.body.selectedship,
+        Quantity : req.body.quantity,
+        Dealer : req.body.mycustomer,
+        Ins_start : date,
+        Ins_end : "",
+        //Soft_start: "",
+        Soft_end: "",
+        //mass_start: "",
+        mass_end: "",
+        //quality_start: "",
+        quality_end: "",
+        //testing_start: "",
+        testing_end: "",
+        //ship_start: "",
+        ship_end: ""
+      })
+      //New process table
+      pros = new inspros({
+        Pros_id : projid,
+        Ins_ps : "0",
+        Soft_ps : "0",
+        Test_ps : "0",
+        Quality_ps: "0",
+        Mass_prod : "0",
+        Ship_ps : "0"
+      })
 
-    //New process table
-    pros = new inspros({
-      Pros_id : projid,
-      Ins_ps : "0",
-      Soft_ps : "0",
-      Test_ps : "0",
-      Quality_ps: "0",
-      Mass_prod : "0",
-      Ship_ps : "0"
-    })
-
-    //New Requirement Table
-    req = new insreq({
-      Req_id : projid,
-      Screen : "0",
-      Battery : "0",
-      Processor : "0",
-      Camera : "0",
-      Memory : "0",
-      Inner_Body : "0",
-      Vibrator : "0",
-      Speaker : "0",
-      Motherboard : "0",
-      Button : "0"
-    })
+      //New Requirement Table
+      req = new insreq({
+        Req_id : projid,
+        Screen : "0",
+        Battery : "0",
+        Processor : "0",
+        Camera : "0",
+        Memory : "0",
+        Inner_Body : "0",
+        Vibrator : "0",
+        Speaker : "0",
+        Motherboard : "0",
+        Button : "0"
+      })
 
     // //New process table
     // pros = new inspros({
@@ -167,31 +178,32 @@ app.post('/newproj' , (req, res) => {
     // })
     
 
-    //Save new project into mongodb
-    proj.save().then((result) => {
-      //console.log(result);
-      pros.save().then((result2) => {
-        //console.log(result2);
-        req.save().then((result3) => {
-          //console.log(result3);
+      //Save new project into mongodb
+      proj.save().then((result) => {
+        //console.log(result);
+        pros.save().then((result2) => {
+          //console.log(result2);
+          req.save().then((result3) => {
+            //console.log(result3);
+          })
         })
       })
+    // res.redirect('/newproj');
+    res.redirect('/projmng');
     })
-  // res.redirect('/newproj');
-  res.redirect('/projmng');
+    .catch((error) => {
+      console.log(error);
+    })
+    return false;
   })
-  .catch((error) => {
-    console.log(error);
-  })
-  return false;
-})
 
-// Load Production Employer  Page
+// Load Employer  Page
 app.get('/psen', loginSession, (req, res) => {
   var rq = require('./reqdb');
   var personid = req.session.pid;
   var persondept = req.session.department;
   var proj = require('./Projdb');
+  var add = require('./deaDb');
   var projecid;
   var proj1 = [];
   var proj2 = [];
@@ -281,7 +293,6 @@ app.get('/psen', loginSession, (req, res) => {
           
         });
       })
-      
     }
     else if(persondept == "Production")
     {
@@ -331,6 +342,27 @@ app.get('/psen', loginSession, (req, res) => {
       })
     }
 
+    else if(persondept == "Shipment")
+    {
+      proj.find({
+        "Project_id" :proj1
+      })
+      .then((response2) => {
+          var deal =  [];
+          for(var x = 0; x < response2.length; x++){
+            deal.push(response2[x].Dealer);
+          }
+          add.find({
+            "Name" : deal
+          })
+          .then((response3) => {
+            res.render("pages/shipping",{
+              project : response2,
+              projdealer : response3
+          })
+        });
+      })
+    }
   })
 
   
@@ -347,8 +379,7 @@ app.get('/pmng', loginSession, (req, res) => {
   .then((response) => {
     console.log("Dept:",dept);
     for(x=0;x<response.length;x++){
-        if(dept == "Production")
-        {
+        if(dept == "Production"){
           var assignid = response[x].Production;
         }
         else if(dept == "Mass")
@@ -410,34 +441,32 @@ app.get('/split', loginSession, (req, res) => {
   var sessiondep = req.session.department;
   var TDB = require('./taskdb');
   var EDB = require('./Empdb');
-  console.log("Department:  ",sessiondep);
   EDB.find({
     "Department":req.session.department
   })
   .then((response) => {
     for(x=0;x<response.length ;x++){
-    if(response[x].Emp_id == req.session.pid)
-    {
-      // console.log("duplicate");
-      delete response[x];
+      if(response[x].Emp_id == req.session.pid)
+      {
+        // console.log("duplicate");
+        delete response[x];
+      }
+      else if (x<2){
+        // console.log("continue");
+        worker.push(response[x]);
+      }
+      else{
+        workers.push(response[x]);
+        Array.prototype.push.apply(worker, workers);
+      }
     }
-    else if (x<2){
-      // console.log("continue");
-      worker.push(response[x]);
-      //console.log(x);
-      
-    }
-    else{
-      workers.push(response[x]);
-      Array.prototype.push.apply(workers, worker);
-    }
-   
-  }
-  TDB.find({})
-  .then((response2) => {
-    res.render("pages/splitwork", {
-      empl : workers,
-      tsk : response2
+    TDB.find({
+
+    })
+    .then((response2) => {
+      res.render("pages/splitwork", {
+        empl : worker,
+        tsk : response2
     })
   })
   //console.log("All Response: ",response);
@@ -482,7 +511,6 @@ app.get('/split', loginSession, (req, res) => {
           else {
             req.session.position = response1[0].Position;
             req.session.department = response1[0].Department;
-            console.log("asdfsadf");
             res.redirect('/psen');
         }
        })
@@ -742,6 +770,7 @@ app.post('/status' , (req, res) => {
   var id = req.session.pid;
   var dept = req.session.department;
   var rez = req.body.res;
+  var random;
   if(persondept == "IT"){
       proj_tbl.updateOne({
         "Project_id": projid
@@ -857,7 +886,7 @@ app.post('/status' , (req, res) => {
         },
         {
           $set:{
-          "Status" : "Delivery Phase",
+          "Status" : "Shipping Phase",
           "quality_end" : date
           }
         },
@@ -884,7 +913,6 @@ app.post('/status' , (req, res) => {
               .then((response2) => {
                 var prod_name = response2[0].Product_name;
                 for(var i = 0; i < number; i++){
-                  console.log(x);
                   x++;
                   dev_tbl
                   .find()
@@ -897,7 +925,8 @@ app.post('/status' , (req, res) => {
                       Device_id : dev,
                       Manufacture : date,
                       Status : "Delivery",
-                      Product_name : prod_name
+                      Product_name : prod_name,
+                      Serial_number : generateSerial()
                     })
                     device.save().then((result) => {
                       console.log("Insert Successful");
@@ -913,30 +942,30 @@ app.post('/status' , (req, res) => {
         });
       }
       else if(rez == "test"){
-        for(var i = 0; i < 5; i++)
-        {
-          dev_tbl
-              .find()
-              .sort({"_id":-1})
-              .limit(1)
-              .then((response3) => {
-                dev = response3[0].Device_id;
-                dev++;
-                device = new dev_tbl({
-                  Device_id : dev,
-                  Manufacture : date,
-                  Status : "Delivery",
-                  Product_name : "blabla"
-                })
-                device.save().then((result) => {
-                  console.log("Insert Successful");
-                })
-              })
-              .catch((error) => {
-                console.log(error);
-              })
-        }
-
+        // for(var i = 0; i < 5; i++)
+        // {
+        //   dev_tbl
+        //       .find()
+        //       .sort({"_id":-1})
+        //       .limit(1)
+        //       .then((response3) => {
+        //         dev = response3[0].Device_id;
+        //         dev++;
+        //         device = new dev_tbl({
+        //           Device_id : dev,
+        //           Manufacture : date,
+        //           Status : "Delivery",
+        //           Product_name : "blabla"
+        //         })
+        //         device.save().then((result) => {
+        //           console.log("Insert Successful");
+        //         })
+        //       })
+        //       .catch((error) => {
+        //         console.log(error);
+        //       })
+        // }
+        console.log(random);
       }
       else
       {
@@ -1016,7 +1045,7 @@ app.post('/newemp' , (req, res) => {
       })
     })
   res.redirect('/newemp',{
-    succress : "1"
+    success : "1"
   });
   })
   .catch((error) => {
@@ -1025,6 +1054,131 @@ app.post('/newemp' , (req, res) => {
   return false;
 })
 
+app.post('/comparedate' , (req, res) => {
+  var proj_tbl = require('./Projdb');
+  var projectid = req.body.id;
+  var avgtime = [];
+  proj_tbl.find({})
+  .then((response) => {
+    var count, totalinsert, totalsof, totaltest, totalmas, totalquality, averageinsert, averagesoftware, averagequality, averagemass, averagetesting;
+    count = totalinsert = totalsof = totaltest = totalmas = totalquality = averageinsert = averagesoftware = averagemass = averagetesting = averagequality = 0;
+    for(var x = 0; x < response.length; x++){
+      insert1 = response[x].Ins_start;
+      insert2 = response[x].Ins_end;
+      if(insert1 == "" || insert2 == ""){
+      }
+      else{
+        let insDifference = Math.abs(insert2.getTime() - insert1.getTime());
+        var differentins = Math.ceil(insDifference / (1000 * 3600 * 24));
+        totalinsert += differentins;
+      }
+
+      soft = response[x].Soft_end;
+      if(soft == "" || insert2 == ""){
+      }
+      else{
+        let sofDifference = Math.abs(soft.getTime() - insert2.getTime());
+        var differentsof = Math.ceil(sofDifference / (1000 * 3600 * 24));
+        totalsof += differentsof;
+    }
+
+      test = response[x].testing_end;
+      if(test == "" || soft == ""){
+      }
+      else{
+        let testDifference = Math.abs(test.getTime() - soft.getTime());
+        var differenttest = Math.ceil(testDifference / (1000 * 3600 * 24));
+        totaltest += differenttest;
+      }
+
+      mass = response[x].mass_end;
+      if(test == "" || mass == ""){
+      }
+      else{
+        let masDifference = Math.abs(mass.getTime() - test.getTime());
+        var differentmas = Math.ceil(masDifference / (1000 * 3600 * 24));
+        totalmas += differentmas;  
+    }
+
+      quality = response[x].quality_end;
+      if(quality == "" || mass == ""){
+      }
+      else{
+      let qualityDifference = Math.abs(quality.getTime() - mass.getTime());
+      var differentquality = Math.ceil(qualityDifference / (1000 * 3600 * 24));
+      totalquality += differentquality;
+      }
+      count++;
+    }
+    averageinsert = totalinsert/ count; 
+    averagesoftware = totalsof/ count; 
+    averagetesting = totaltest/ count; 
+    averagemass = totalmas/ count;
+    averagequality = totalquality/ count; 
+    avgtime.push(averageinsert,averagesoftware,averagetesting,averagemass,averagequality);
+    proj_tbl.find({
+      "Project_id" : projectid
+    })
+      .then((response2) => {
+        var projduration = [];
+        for(var x = 0; x < response2.length; x++){
+          curins = response2[x].Ins_start;
+          curins2 = response2[x].Ins_end;
+          if(curins == "" ||  curins2 == ""){
+            differentins = 0;
+          }
+          else{
+          let insDifference = Math.abs(curins2.getTime() - curins.getTime());
+          let differentins = Math.ceil(insDifference / (1000 * 3600 * 24));
+          }
+
+          cursoft = response2[x].Soft_end;
+          if(curins2 == "" || cursoft == ""){
+            differentsof = 0;
+          }
+          else{
+          let sofDifference = Math.abs(cursoft.getTime() - curins2.getTime());
+          let differentsof = Math.ceil(sofDifference / (1000 * 3600 * 24));
+          }
+
+          curtest = response2[x].testing_end;
+          if(curtest == "" || cursoft == ""){
+            differenttest = 0;
+          }
+          else{
+          let testDifference = Math.abs(curtest.getTime() - cursoft.getTime());
+          let differenttest = Math.ceil(testDifference / (1000 * 3600 * 24));
+          }
+
+          curmas = response2[x].mass_end;
+          if(curmas == "" || curtest == ""){
+            differentmas = 0;
+          }
+          else{
+          let masDifference = Math.abs(curmas.getTime() - curtest.getTime());
+          let differentmas = Math.ceil(masDifference / (1000 * 3600 * 24));
+          }
+
+          curquality = response2[x].quality_end;
+          if(curquality == "" || curmas == ""){
+            differentquality = 0;
+          }
+          else{
+          let qualityDifference = Math.abs(curquality.getTime() - curmas.getTime());
+          let differentquality = Math.ceil(qualityDifference / (1000 * 3600 * 24));
+          }
+          
+          projduration.push(differentins,differentsof,differenttest,differentmas,differentquality);
+        }
+        res.render("pages/chart", {
+          average : avgtime,
+          current : projduration
+        });
+      })
+})
+
+  
+})
 
 app.listen(PORT, () =>{
   console.log(`Listening on ${ PORT }`)
@@ -1045,3 +1199,32 @@ function loginSession(req, res, next) {
       next(); // Continue to next step
   }
 };
+
+function generateSerial() {
+    
+  'use strict';
+  
+  var chars = '1234567890',
+      
+      serialLength = 15,
+      
+      randomSerial = "",
+      
+      i,
+      
+      randomNumber;
+  
+  for (i = 0; i < serialLength; i = i + 1) {
+      
+      randomNumber = Math.floor(Math.random() * chars.length);
+      
+      randomSerial += chars.substring(randomNumber, randomNumber + 1);
+      
+  }
+  
+  return randomSerial;
+  
+}
+function calculationdays(){
+ 
+}
