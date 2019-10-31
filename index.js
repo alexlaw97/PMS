@@ -7,6 +7,7 @@ const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const axios = require('axios')
 const app = express();
+var ps =[];
 const db = "mongodb+srv://admin:abc0123@cluster0-k1y0a.mongodb.net/pms?retryWrites=true&w=majority";
 
 const PORT = process.env.PORT || 5000
@@ -33,6 +34,7 @@ app.use(flash());
 
 // Load Login Page
 app.get('/',(req, res) => {
+   ps.length = 0;
    res.render("pages/login");
   // res.render("pages/newemp");
 });
@@ -148,7 +150,7 @@ app.post('/newproj' , (req, res) => {
         Soft_ps : "0",
         Test_ps : "0",
         Quality_ps: "0",
-        Mass_prod : "0",
+        Mass_ps : "0",
         Ship_ps : "0"
       })
 
@@ -372,7 +374,9 @@ app.get('/psen', loginSession, (req, res) => {
 app.get('/pmng', loginSession, (req, res) => {
   var PJB = require('./Projdb');
   var EMP = require('./Empdb');
+  var PSB = require('./prosdb');
   var total = [];
+  var one = [];
   var assign = [];
   var dept = req.session.department;
   PJB.find({})
@@ -413,25 +417,72 @@ app.get('/pmng', loginSession, (req, res) => {
         
       }
       //assign.push(assignid);
+      
     }
-    //console.log("total" ,total);
-    //console.log("Assign" , assign);
-        EMP.find({
-          "Emp_id": assign
+  
+   
+    PJB.find()
+    .then((response5) =>{
+      for(var z = 0; z < response5.length; z++){
+         var q = response5[z].Project_id;
+         one.push(q);
+        }
+  
+        PSB.find({
+        "Pros_id" : one
         })
-          .then((response2) => {
-            // console.log(response2);
-          // console.log(response);
-          res.render("pages/index", {
-            project : response,
-            employer : response2
+        
+        .then((response3) => { 
+            var w = 0;
+            while(response3[w] != null){
+              var quality = response3[w].Quality_ps;
+              var mass = response3[w].Mass_ps;
+              var test = response3[w].Test_ps;
+              var soft = response3[w].Soft_ps;
+              var ins = response3[w].Ins_ps;
+                if(quality == "1"){
+                  ps.push("5");
+                  w++;
+                }
+                else if(mass == "1"){
+                  ps.push("4");
+                  w++;
+                }
+                else if(test == "1"){
+                  ps.push("3");
+                  w++;
+                }
+                else if(soft == "1"){
+                  ps.push("2");
+                  w++;
+                }
+                else if(ins == "1"){
+                  ps.push("1");
+                  w++;
+                }
+                else {
+                  ps.push("0");
+                  w++;
+                }
+            }
           })
-        })
-    //   }
-    // }
-    
-  })
-});
+          //console.log("Assign" , assign);
+          EMP.find({
+            "Emp_id": assign
+          })
+            .then((response2) => {
+              
+            res.render("pages/index", {
+              project : response,
+              employer : response2,
+              phase : ps
+            })
+          })
+          //   }
+          // }
+        }) 
+      })
+    });
 
 
 // Load Employer according to their department
@@ -1176,9 +1227,14 @@ app.post('/comparedate' , (req, res) => {
         });
       })
 })
-
-  
 })
+
+// Redirect to home page
+app.get('/logout', (req, res) => {
+  req.session.destroy();    // Destroy session before redirect
+  console.log('session destroy');
+  res.redirect("/");
+});
 
 app.listen(PORT, () =>{
   console.log(`Listening on ${ PORT }`)
@@ -1225,6 +1281,4 @@ function generateSerial() {
   return randomSerial;
   
 }
-function calculationdays(){
- 
-}
+

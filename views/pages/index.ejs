@@ -2,12 +2,11 @@
 <html>
 <head>
   <% include ../partials/header.ejs %>
+  <link rel="stylesheet" type="text/css" href="/stylesheets/index.css">
+  <button class="btn btn-warning float-right mt-2" onclick="location.href='/logout'">Logout</button>
 </head>
 
 <body>
-  <form action="comparedate" method="post">
-    <button type="submit" >Compare Date</button>
-  </form>
   <!-- <div>
     <button type="button" class="btn btn-primary" id="btnbtn" data-toggle="modal" data-target="#newprojmodal">Create Project</button>
     </div> -->
@@ -60,6 +59,7 @@
             <th>Project Title</th>
             <th>Status</th>
             <th>Assigned to</th>
+            <th>Progress</th>
             <th>Analysis</th>
             <th>Action</th>
           </thead>
@@ -72,8 +72,28 @@
               <% for(z=0;z<employer.length;z++){ %>
               <% if(employer[z].Emp_id == project[x].Production || employer[z].Emp_id == project[x].IT_Dept || employer[z].Emp_id == project[x].Testing_Dept || employer[z].Emp_id == project[x].Mass_Dept || employer[z].Emp_id == project[x].Ship_Dept){ %>
               <td><%= employer[z].Emp_name %></td>
+              <td>
+                <div class="container">
+                  <div class="progress">
+                      <%if(phase[x] == 5){%>
+                        <div class="progress-bar onehundred">
+                        <%}else if(phase[x] == 4){%>
+                          <div class="progress-bar seventyfive"></div>
+                          <%}else if(phase[x] == 3){%>
+                            <div class="progress-bar fifty"></div>
+                            <%}else if(phase[x] == 2){%>
+                              <div class="progress-bar twentyfive"></div>
+                            <%}else if(phase[x] == 1){%>
+                              <div class="progress-bar five"></div>
+                              <%}else{%>
+                                <div class="progress-bar"></div>
+                              <%}%>
+                    </div>
+                  </div>
+                </div>
+              </td>
               <form action="comparedate" method="POST">
-              <td><button type="submit" value='<%= project[x].Project_id  %>' name="id">View</button></td>
+              <td><button class ="btn btn-outline-primary" type="submit" value='<%= project[x].Project_id  %>' name="id">View</button></td>
               </form>
               <td><button class="btn btn-primary btn-block" type="button" onclick="getprojid('<%= project[x].Project_id  %>')">Change Employer </button> </td>
               <%}else{%>
@@ -109,9 +129,11 @@
         });
     } );
 
-function getprojid(id){
-  localStorage.setItem("project",id);
-  window.location.href="split"
-}
+    function getprojid(id){
+      localStorage.setItem("project",id);
+      window.location.href="split"
+    }
+
+    
 </script>
 </html>
