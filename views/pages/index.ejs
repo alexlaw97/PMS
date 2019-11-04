@@ -76,25 +76,31 @@
                 <div class="container">
                   <div class="progress">
                       <%if(phase[x] == 5){%>
-                        <div class="progress-bar onehundred">
+                        <div class="progress-bar onehundred">100%</div>
                         <%}else if(phase[x] == 4){%>
-                          <div class="progress-bar seventyfive"></div>
+                          <div class="progress-bar seventyfive">75%</div>
                           <%}else if(phase[x] == 3){%>
-                            <div class="progress-bar fifty"></div>
+                            <div class="progress-bar fifty">50%</div>
                             <%}else if(phase[x] == 2){%>
-                              <div class="progress-bar twentyfive"></div>
+                              <div class="progress-bar twentyfive">25%</div>
                             <%}else if(phase[x] == 1){%>
-                              <div class="progress-bar five"></div>
+                              <div class="progress-bar five">5%</div>
                               <%}else{%>
-                                <div class="progress-bar"></div>
+                                <div class="progress-bar">0%</div>
                               <%}%>
                     </div>
                   </div>
                 </div>
               </td>
+              <%if(phase[x] == 0){%>
+                <form action="comparedate" method="POST">
+                    <td><button class ="btn btn-outline-primary" type="button" name="id" disabled>View</button></td>
+                    </form>
+                <%}else{%>
               <form action="comparedate" method="POST">
               <td><button class ="btn btn-outline-primary" type="submit" value='<%= project[x].Project_id  %>' name="id">View</button></td>
               </form>
+              <%}%>
               <td><button class="btn btn-primary btn-block" type="button" onclick="getprojid('<%= project[x].Project_id  %>')">Change Employer </button> </td>
               <%}else{%>
                   <td></td>
@@ -127,6 +133,9 @@
             $("#proj_tbl_filter").detach().appendTo('#search_project');
         }
         });
+        function preventBack(){window.history.forward();}
+            setTimeout("preventBack()", 0);
+            window.onunload=function(){null};
     } );
 
     function getprojid(id){

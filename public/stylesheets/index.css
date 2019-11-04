@@ -23,6 +23,9 @@
     transition: 0.4s linear;
     transition-property: width, background-color;
     box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.25), inset 0 1px rgba(255, 255, 255, 0.1);
+    font-family:   sans-serif;
+    font-size:      15px;
+    font-weight:    bold;
   }
   
   /*
@@ -34,7 +37,7 @@
   
   .five{
     width: 5%;
-    background-color: #f63a0f;
+    background-color: #f63a0f; 
   }
   
   .twentyfive{

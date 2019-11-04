@@ -8,6 +8,9 @@ const bodyParser = require('body-parser')
 const axios = require('axios')
 const app = express();
 var ps =[];
+var totsks = [];
+var totaltasks = [];
+var progresstasks = [];
 const db = "mongodb+srv://admin:abc0123@cluster0-k1y0a.mongodb.net/pms?retryWrites=true&w=majority";
 
 const PORT = process.env.PORT || 5000
@@ -34,11 +37,11 @@ app.use(flash());
 
 // Load Login Page
 app.get('/',(req, res) => {
-   ps.length = 0;
    res.render("pages/login");
   // res.render("pages/newemp");
 });
 
+// Project Manager Getting all employer data
 app.get('/projmng' , loginSession, (req, res) => {
   var emp = require('./Empdb');
   var product = require('./prodDb');
@@ -75,7 +78,6 @@ app.get('/projmng' , loginSession, (req, res) => {
             .then((response6) => {
               add.find({})
             .then ((response7) => {
-              console.log(response7);
               product.find({})
               .then((response8) => {
                 res.render("pages/createproj", {
@@ -103,10 +105,40 @@ app.post('/newproj' , (req, res) => {
   var insproj = require('./Projdb');
   var inspros = require('./prosdb');
   var insreq = require('./reqdb');
-  var insqua = require('./qualitydb');
-  var insdev = require('./devdb');
+  var tasks = require('./taskdb');
+  var emptask = [];
   var date = new Date();
   var projid;
+
+  //Push all the selected employer id into a array
+  emptask.push(req.body.selectedprod,req.body.selectedit,req.body.selectedtest,req.body.selectedmass,req.body.selectedquality,req.body.selectedship);
+
+
+     // Calculation of total task and progression
+     for(var x = 0; x < emptask.length; x++){
+      
+      tasks.findOne({
+        "Task_id" : emptask[x]
+      })
+      .then((response3) => {
+        var total = response3.Total_tasks;  
+        var progress = response3.Progression;
+        
+        total++;
+        progress++;
+        if(totaltasks.length +1  > emptask.length ){
+          totaltasks.length =0;
+          progresstasks.length =0;
+          totaltasks.push(total);
+          progresstasks.push(progress);
+        }
+        else{
+          totaltasks.push(total);
+          progresstasks.push(progress);
+        }
+      })
+    }
+
   insproj
   .find()
   .sort({"_id":-1})
@@ -169,18 +201,29 @@ app.post('/newproj' , (req, res) => {
         Button : "0"
       })
 
-    // //New process table
-    // pros = new inspros({
-    //   Pros_id : projid,
-    //   Ins_ps : "0",
-    //   Soft_ps : "0",
-    //   Test_ps : "0",
-    //   Mass_prod : "0",
-    //   Ship_ps : "0"
-    // })
+     
+     
+      // console.log(emptask.length);
+      // var tsk = totaltasks[1];
+      // console.log(tsk);
+    // Update all the selected employers task number
+      for(var x = 0; x < emptask.length; x++){
+            tasks.updateOne({
+              "Task_id" : emptask[x]
+            },
+          { $set:{
+                  "Total_tasks" : totaltasks[x],
+                  "Progression" : progresstasks[x]
+                  
+                  }
+          },
+          function(result){
+            console.log("Update Successful");
+          });
+      }
     
 
-      //Save new project into mongodb
+      // Save new project into mongodb
       proj.save().then((result) => {
         //console.log(result);
         pros.save().then((result2) => {
@@ -191,13 +234,20 @@ app.post('/newproj' , (req, res) => {
         })
       })
     // res.redirect('/newproj');
-    res.redirect('/projmng');
+    // res.redirect('/projmng');
     })
     .catch((error) => {
       console.log(error);
     })
     return false;
   })
+
+
+//Main page of Employer Page (Nav Page)
+app.get('/mainemp',(req, res) => {
+  res.render("pages/mainemp");
+});
+
 
 // Load Employer  Page
 app.get('/psen', loginSession, (req, res) => {
@@ -346,6 +396,8 @@ app.get('/psen', loginSession, (req, res) => {
 
     else if(persondept == "Shipment")
     {
+      // console.log("asd");
+      // res.render("pages/shipping");
       proj.find({
         "Project_id" :proj1
       })
@@ -376,7 +428,7 @@ app.get('/pmng', loginSession, (req, res) => {
   var EMP = require('./Empdb');
   var PSB = require('./prosdb');
   var total = [];
-  var one = [];
+
   var assign = [];
   var dept = req.session.department;
   PJB.find({})
@@ -417,70 +469,23 @@ app.get('/pmng', loginSession, (req, res) => {
         
       }
       //assign.push(assignid);
-      
     }
   
-   
-    PJB.find()
-    .then((response5) =>{
-      for(var z = 0; z < response5.length; z++){
-         var q = response5[z].Project_id;
-         one.push(q);
-        }
-  
-        PSB.find({
-        "Pros_id" : one
+        //console.log("Assign" , assign);
+        EMP.find({
+          "Emp_id": assign
         })
+          .then((response2) => {
+            
+          res.render("pages/index", {
+            project : response,
+            employer : response2,
+            phase : ps
+          })
+        })
+        //   }
+        // }
         
-        .then((response3) => { 
-            var w = 0;
-            while(response3[w] != null){
-              var quality = response3[w].Quality_ps;
-              var mass = response3[w].Mass_ps;
-              var test = response3[w].Test_ps;
-              var soft = response3[w].Soft_ps;
-              var ins = response3[w].Ins_ps;
-                if(quality == "1"){
-                  ps.push("5");
-                  w++;
-                }
-                else if(mass == "1"){
-                  ps.push("4");
-                  w++;
-                }
-                else if(test == "1"){
-                  ps.push("3");
-                  w++;
-                }
-                else if(soft == "1"){
-                  ps.push("2");
-                  w++;
-                }
-                else if(ins == "1"){
-                  ps.push("1");
-                  w++;
-                }
-                else {
-                  ps.push("0");
-                  w++;
-                }
-            }
-          })
-          //console.log("Assign" , assign);
-          EMP.find({
-            "Emp_id": assign
-          })
-            .then((response2) => {
-              
-            res.render("pages/index", {
-              project : response,
-              employer : response2,
-              phase : ps
-            })
-          })
-          //   }
-          // }
-        }) 
       })
     });
 
@@ -530,6 +535,7 @@ app.get('/split', loginSession, (req, res) => {
 
   //Login User
    app.post('/login', (req,res) => {
+     ps.length = 0;
      var user = require('./userDb');
      var emp = require('./Empdb')
      var username = req.body.username;
@@ -557,12 +563,13 @@ app.get('/split', loginSession, (req, res) => {
             req.session.position = response1[0].Position;
             req.session.department = response1[0].Department;
             console.log(response1[0].Department);
+            countphase();
             res.redirect('/pmng');
           }
           else {
             req.session.position = response1[0].Position;
             req.session.department = response1[0].Department;
-            res.redirect('/psen');
+            res.redirect('/mainemp');
         }
        })
        
@@ -1281,4 +1288,62 @@ function generateSerial() {
   return randomSerial;
   
 }
+
+function countphase(){
+  var PJB = require('./Projdb');
+  var PSB = require('./prosdb');
+  var one = [];
+  PJB.find()
+    .then((response5) =>{
+      for(var z = 0; z < response5.length; z++){
+         var q = response5[z].Project_id;
+         one.push(q);
+        }
+  
+        PSB.find({
+        "Pros_id" : one
+        })
+        
+        .then((response3) => { 
+            var w = 0;
+            while(response3[w] != null){
+              var quality = response3[w].Quality_ps;
+              var mass = response3[w].Mass_ps;
+              var test = response3[w].Test_ps;
+              var soft = response3[w].Soft_ps;
+              var ins = response3[w].Ins_ps;
+                if(quality == "1"){
+                  ps.push("5");
+                  w++;
+                }
+                else if(mass == "1"){
+                  ps.push("4");
+                  w++;
+                }
+                else if(test == "1"){
+                  ps.push("3");
+                  w++;
+                }
+                else if(soft == "1"){
+                  ps.push("2");
+                  w++;
+                }
+                else if(ins == "1"){
+                  ps.push("1");
+                  w++;
+                }
+                else {
+                  ps.push("0");
+                  w++;
+                }
+            }
+          })
+        }) 
+      }
+  function counttask(){
+    var pros = require('./prosdb');
+    pros.find({
+
+    })
+  }
 
