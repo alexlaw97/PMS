@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <% include ../partials/header.ejs %>
+            <button class="btn btn-warning float-right mt-2" onclick="location.href='/logout'">Logout</button>
+    </head>
+    <body>
+        <div class="container">
+            <h2 style="text-align: center">Project List</h2>
+                    <div class="table table-striped" id="proj_table" align="center">
+                            <!-- Search form -->
+                            <div id="search_project" align="center"></div>
+                              <table id="proj_tbl"  >
+                                <thead>
+                                  <th>Project Id</th>
+                                  <th>Project Title</th>
+                                  <th>Deadline</th>
+                                  <th>Status</th>                   
+                                </thead>
+                                <tbody>    
+                                  <%for(x=0;x<project.length;x++){%>
+                                    <%for(x=0;x<duration.length;x++){%>
+                                          <tr>
+                                          <form action="status" method="POST">
+                                          <td><input class="form-control-plaintext" type="text" name="projectid" value="<%= project[x].Project_id %>" readonly></td>
+                                          <td><%= project[x].Project_title %></td>
+                                          <td class="duration"><%= duration[x] %> Days</td>
+                                          <td><%= project[x].Status%></td>
+                                          </form>
+                                        </tr>
+                                        <%}%>
+                                    <%}%>
+                                    </tbody>
+                                  </table>
+                                </div>
+                                </div>
+
+                            </body>        
+                          <script>
+                          $(document).ready(function() {
+                              $('#proj_tbl').DataTable({
+                            
+                              });
+                          });  
+                     
+                          
+               </script>
+</html>

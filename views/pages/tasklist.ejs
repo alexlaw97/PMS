@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <% include ../partials/header.ejs %>
+            <button class="btn btn-warning float-right mt-2" onclick="location.href='/logout'">Logout</button>
+    </head>
+    <body>
+        <div class="container">
+            <h2 style="text-align: center">Project List</h2>
+                    <div class="table table-striped" id="proj_table" align="center">
+                            <!-- Search form -->
+                            <div id="search_project" align="center"></div>
+                              <table id="proj_tbl"  >
+                                <thead>
+                                  <th>Project Id</th>
+                                  <th>Project Title</th>
+                                  <th>Status</th>
+                                  <th>Detail</th>                   
+                                </thead>
+                                <tbody>    
+                               
+                                  <%for(x=0;x<project.length;x++){%>
+                                          <tr>
+                                          <form action="status" method="POST">
+                                          <td><input class="form-control-plaintext" type="text" name="projectid" value="<%= project[x].Project_id %>" readonly></td>
+                                          <td><%= project[x].Project_title %></td>
+                                          <td><%= project[x].Status %></td>
+                                          <%if(project[x].Status == "Installation Phase"){%>
+                                            <% var z = project[x].Production%>
+                                            <%z--;%>
+                                            <td><button type="button" class="btn btn-primary" id="btn" data-toggle="modal" data-target="#myModal" data-employer="<%= employerlist[z].Emp_name %>" data-dealer="<%= project[x].Dealer %>">Open modal</button></td>
+                                          <%}else if(project[x].Status == "Software Phase"){%>
+                                            <% var z = project[x].IT_Dept%>
+                                            <%z--;%>
+                                            <td><button type="button" class="btn btn-primary" id="btn" data-toggle="modal" data-target="#myModal" data-employer="<%= employerlist[z].Emp_name %>" data-dealer="<%= project[x].Dealer %>">Open modal</button></td>
+                                            <%}else if(project[x].Status == "Testing Phase"){%>
+                                            <% var z = project[x].Testing_Dept%>
+                                            <%z--;%>
+                                            <td><button type="button" class="btn btn-primary" id="btn" data-toggle="modal" data-target="#myModal" data-employer="<%= employerlist[z].Emp_name %>" data-dealer="<%= project[x].Dealer %>">Open modal</button></td>
+                                            <%}else if(project[x].Status == "Mass Phase"){%>
+                                            <% var z = project[x].Mass_Dept%>
+                                            <%z--;%>
+                                            <td><button type="button" class="btn btn-primary" id="btn" data-toggle="modal" data-target="#myModal" data-employer="<%= employerlist[z].Emp_name %>" data-dealer="<%= project[x].Dealer %>">Open modal</button></td>
+                                            <%}else if(project[x].Status == "Quality Phase"){%>
+                                            <% var z = project[x].Quality_Dept%>
+                                            <%z--;%>
+                                            <td><button type="button" class="btn btn-primary" id="btn" data-toggle="modal" data-target="#myModal" data-employer="<%= employerlist[z].Emp_name %>" data-dealer="<%= project[x].Dealer %>">Open modal</button></td>
+                                            <%}else if(project[x].Status == "Shipping Phase"){%>
+                                            <% var z = project[x].Ship_Dept%>
+                                            <%z--;%>
+                                            <td><button type="button" class="btn btn-primary" id="btn" data-toggle="modal" data-target="#myModal" data-employer="<%= employerlist[z].Emp_name %>" data-dealer="<%= project[x].Dealer %>">Open modal</button></td>
+                                          <%}%>
+                                          </form>
+                                        </tr>
+                                    <%}%>
+                                    </tbody>
+                                  </table>
+                                </div>
+                                </div>
+
+                              <!-- The Modal -->
+                              <div class="modal" id="myModal">
+                                <div class="modal-dialog">
+                                  <div class="modal-content">
+
+                                    <!-- Modal Header -->
+                                    <div class="modal-header">
+                                      <h4 class="modal-title">Modal Heading</h4>
+                                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+
+                                    <!-- Modal body -->
+                                    <div class="modal-body">
+                                              <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="">Handle by</span>
+                                                    </div>
+                                                    <input class="form-control" type="text" id="name" readonly>
+                                                  </div>
+                                                  <div class="input-group mb-3">
+                                                      <div class="input-group-prepend">
+                                                          <span class="input-group-text" id="">Dealer  Name</span>
+                                                          </div>
+                                                          <input class="form-control" type="text" id="dealer" readonly>
+                                                        </div> 
+                                    </div>
+                                    <!-- Modal footer -->
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                    </div>
+
+                                  </div>
+                                </div>
+                              </div>
+                            </body>        
+                          <script>
+                          $(document).ready(function() {
+                              $('#proj_tbl').DataTable({
+                            
+                              });
+                              autosize(document.getElementById("address"));
+                          });  
+                          $(document).on("click", "#btn", function () {
+                              var employername = $(this).data('employer');
+                              var dealer = $(this).data('dealer');
+                              $("#name").val(employername);
+                              $("#dealer").val(dealer); 
+                          });
+                          
+               </script>
+</html>

@@ -58,3 +58,7 @@
   cursor: default;
   outline-style: none;
 }
+
+.duration{
+  color:red;
+}

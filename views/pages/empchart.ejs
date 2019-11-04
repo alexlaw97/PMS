@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <% include ../partials/header.ejs %>
+    </head>
+    <body>
+        <div id="container" style="min-width: 310px; max-width: 800px; height: 400px; margin: 0 auto"></div>
+        <script>
+        var conv;
+        var name = [];
+        var Complete = [];
+        var Progress = [];
+        var Total = [];
+        ' <%for(x=0;x<data.length;x++){%>'
+            <%if(data[x].Emp_name ==q)%>
+                name.push('<%=data[x].Emp_name%>');
+                             '<%}%>'
+        ' <%for(x=0;x<data2.length;x++){%>'
+                conv = parseInt('<%= data2[x].Complete_tasks %>');
+                Complete.push(conv);
+                             '<%}%>'
+        ' <%for(x=0;x<data2.length;x++){%>'
+                conv = parseInt('<%= data2[x].Progression %>');
+                Progress.push(conv);
+                             '<%}%>'
+        ' <%for(x=0;x<data2.length;x++){%>'
+                conv = parseInt('<%= data2[x].Total_tasks %>');
+                Total.push(conv);
+                             '<%}%>'
+        Highcharts.chart('container', {
+            exporting: {
+                enabled: false
+            },
+            chart: {
+                type: 'bar'
+            },
+            title: {
+                text: 'Employer Performance'
+            },
+            xAxis: {
+                categories: name
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Total workloads of employer'
+                }
+            },
+            legend: {
+                reversed: true
+            },
+            plotOptions: {
+                series: {
+                    stacking: 'normal'
+                }
+            },
+            series: [{
+                name: 'Complete',
+                data: Complete
+            },
+            {
+                name:'Progression',
+                data: Progress
+            },
+            {
+                name:'Total',
+                data: Total
+            }],
+            credits: {
+                        enabled: false
+                    }
+        });
+        </script>
+        </body>
+        </html>

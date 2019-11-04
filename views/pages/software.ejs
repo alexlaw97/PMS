@@ -6,7 +6,7 @@
     </head>
     <body>
         <div class="container">
-            <h2 style="text-align: center">Sofware Phase</h2>
+            <h2 style="text-align: center">Sofware Phase / Mass Phase</h2>
                     <div class="table table-striped" id="proj_table" align="center">
                             <!-- Search form -->
                             <div id="search_project" align="center"></div>
@@ -19,13 +19,13 @@
                                 <tbody>    
                                   <%for(x=0;x<project.length;x++){%>
                                   <tr>
-                                  <form action="status" method="POST">
-                                  <td ><%= project[x].Project_id %></td>
-                                  <td><%= project[x].Project_title %></td>
-                                  <td><button class="btn btn-primary btn-block" type="submit" value="<%= project[x].Project_id %>" name="projectid">Done </button> </td>
-                                  </form>
-                                </tr>
-                                    <%}%>
+                                    <form action="status" method="POST">
+                                      <td ><%= project[x].Project_id %></td>
+                                      <td><%= project[x].Project_title %></td>
+                                      <td><button class="btn btn-primary btn-block" type="submit" value="<%= project[x].Project_id %>" name="projectid">Done </button> </td>
+                                    </form>
+                                  </tr>
+                                  <%}%>
                                   </tbody>
                                 </table>
                               </div>

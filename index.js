@@ -242,11 +242,172 @@ app.post('/newproj' , (req, res) => {
     return false;
   })
 
+  // Employer chart diagram
+  app.get('/chart',(req, res) => {
+    var emp = require('./Empdb');
+    var task = require('./taskdb');
+    var persondept = req.session.department;
+    var personid = req.session.pid;
+    var personname = req.session.name;
+    emp.find({
+      "Department" : persondept
+    })
+    .then((response) => {
+      for(var x = 0; x< response.length; x++){
+        if(response[x].Emp_id != personid){
+          task.find({
+            "Task_id" : response[x].Emp_id
+          })
+          .then((response2) =>{
+            res.render("pages/empchart",{
+              data : response,
+              data2 : response2,
+              name : personname
+            });
+          })
+        }
+      }
+    })
+ });
+
 
 //Main page of Employer Page (Nav Page)
 app.get('/mainemp',(req, res) => {
-  res.render("pages/mainemp");
+  var personid = req.session.pid;
+  var emp = require('./Empdb');
+  emp.find({
+    "Emp_id" : personid
+  })
+  .then((response) => {
+    res.render("pages/mainemp",{
+      employer : response
+    });
+  })
+ 
 });
+
+//View all project in list
+app.get('/task',(req,res) => {
+  var proj = require('./Projdb');
+  var emp = require('./Empdb');
+  proj.find()
+  .then((response) => {
+        emp.find().then((response2) => {
+          res.render("pages/tasklist",{
+            project : response,
+            employerlist : response2
+          });
+        })
+      })
+    })
+
+//View Self Task List
+app.get('/mytask',(req,res) => {
+  var persondept = req.session.department;
+  var proj = require('./Projdb');
+  var personid = req.session.pid;
+  var date,date2;
+  var datarray = [];
+
+  if(persondept == "Production"){
+    proj.find({
+      "Production" : personid
+    })
+    .then((response) => {
+      for(var x =0; x <response.length; x++){
+      date2 = response[x].Deadline;
+      date = new Date();
+      let Difference = Math.abs(date2.getTime() - date.getTime());
+      var different = Math.ceil(Difference / (1000 * 3600 * 24));
+      datarray.push(different);
+    } 
+     
+      res.render("pages/mytask",{
+        project : response,
+        duration : datarray
+      });
+    })
+  }
+  else if(persondept == "IT"){
+    proj.find({
+      "IT_Dept" : personid
+    })
+    .then((response) => {
+      for(var x =0; x <response.length; x++){
+        date2 = response[x].Deadline;
+        date = new Date();
+        let Difference = Math.abs(date2.getTime() - date.getTime());
+        var different = Math.ceil(Difference / (1000 * 3600 * 24));
+        datarray.push(different);
+      } 
+       
+        res.render("pages/mytask",{
+          project : response,
+          duration : datarray
+        });
+    })
+  }
+  else if(persondept == "Testing"){
+    proj.find({
+      "Testing_Dept" : personid
+    })
+    .then((response) => {
+      for(var x =0; x <response.length; x++){
+        date2 = response[x].Deadline;
+        date = new Date();
+        let Difference = Math.abs(date2.getTime() - date.getTime());
+        var different = Math.ceil(Difference / (1000 * 3600 * 24));
+        datarray.push(different);
+      } 
+       
+        res.render("pages/mytask",{
+          project : response,
+          duration : datarray
+        });
+    })
+  }
+  else if(persondept == "Mass"){
+    proj.find({
+      "Mass_Dept" : personid
+    })
+    .then((response) => {
+      for(var x =0; x <response.length; x++){
+        date2 = response[x].Deadline;
+        date = new Date();
+        let Difference = Math.abs(date2.getTime() - date.getTime());
+        var different = Math.ceil(Difference / (1000 * 3600 * 24));
+        datarray.push(different);
+      } 
+       
+        res.render("pages/mytask",{
+          project : response,
+          duration : datarray
+        });
+    })
+  }
+  else if(persondept == "Quality Assurance"){
+    proj.find({
+      "Quality_Dept" : personid
+    })
+    .then((response) => {
+      for(var x =0; x <response.length; x++){
+        date2 = response[x].Deadline;
+        date = new Date();
+        let Difference = Math.abs(date2.getTime() - date.getTime());
+        var different = Math.ceil(Difference / (1000 * 3600 * 24));
+        datarray.push(different);
+      } 
+       
+        res.render("pages/mytask",{
+          project : response,
+          duration : datarray
+        });
+    })
+  }
+
+
+})
+
 
 
 // Load Employer  Page
@@ -410,6 +571,7 @@ app.get('/psen', loginSession, (req, res) => {
             "Name" : deal
           })
           .then((response3) => {
+          
             res.render("pages/shipping",{
               project : response2,
               projdealer : response3
@@ -999,32 +1161,6 @@ app.post('/status' , (req, res) => {
         })
         });
       }
-      else if(rez == "test"){
-        // for(var i = 0; i < 5; i++)
-        // {
-        //   dev_tbl
-        //       .find()
-        //       .sort({"_id":-1})
-        //       .limit(1)
-        //       .then((response3) => {
-        //         dev = response3[0].Device_id;
-        //         dev++;
-        //         device = new dev_tbl({
-        //           Device_id : dev,
-        //           Manufacture : date,
-        //           Status : "Delivery",
-        //           Product_name : "blabla"
-        //         })
-        //         device.save().then((result) => {
-        //           console.log("Insert Successful");
-        //         })
-        //       })
-        //       .catch((error) => {
-        //         console.log(error);
-        //       })
-        // }
-        console.log(random);
-      }
       else
       {
         proj_tbl.updateOne({
@@ -1340,10 +1476,9 @@ function countphase(){
           })
         }) 
       }
-  function counttask(){
-    var pros = require('./prosdb');
-    pros.find({
+  function duration(){
 
-    })
+    return different;
+   
   }
 
