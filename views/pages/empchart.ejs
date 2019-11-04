@@ -5,28 +5,39 @@
     </head>
     <body>
         <div id="container" style="min-width: 310px; max-width: 800px; height: 400px; margin: 0 auto"></div>
+        <%var taskid = [];%>
+        <%var emptask = [];%>
+        <%for(x=0;x<data.length;x++){%>
+            <%if(data[x].Emp_id != data3){%>
+                <%taskid.push(data[x].Emp_id);%>
+                <%}%>
+            <%}%>
+        <%for(y=0;y<data2.length;y++){%>
+            <%for(z=0;z<taskid.length;z++){%>
+                <%if(data2[y].Task_id == taskid[z]){%>
+                <%emptask.push(data2[y]);%>
+                    <%}%>
+                <%}%>
+            <%}%>
+
         <script>
         var conv;
-        var name = [];
+        var personname = [];
         var Complete = [];
         var Progress = [];
-        var Total = [];
         ' <%for(x=0;x<data.length;x++){%>'
-            <%if(data[x].Emp_name ==q)%>
-                name.push('<%=data[x].Emp_name%>');
-                             '<%}%>'
-        ' <%for(x=0;x<data2.length;x++){%>'
-                conv = parseInt('<%= data2[x].Complete_tasks %>');
+            '<%if(data[x].Emp_id != data3){%>'
+            personname.push("<%=data[x].Emp_name%>");
+            '<%}}%>'
+        ' <%for(x=0;x<emptask.length;x++){%>'
+                conv = parseInt('<%= emptask[x].Complete_tasks %>');
                 Complete.push(conv);
                              '<%}%>'
-        ' <%for(x=0;x<data2.length;x++){%>'
-                conv = parseInt('<%= data2[x].Progression %>');
+        ' <%for(x=0;x<emptask.length;x++){%>'
+                conv = parseInt('<%= emptask[x].Progression %>');
                 Progress.push(conv);
                              '<%}%>'
-        ' <%for(x=0;x<data2.length;x++){%>'
-                conv = parseInt('<%= data2[x].Total_tasks %>');
-                Total.push(conv);
-                             '<%}%>'
+
         Highcharts.chart('container', {
             exporting: {
                 enabled: false
@@ -38,7 +49,7 @@
                 text: 'Employer Performance'
             },
             xAxis: {
-                categories: name
+                categories: personname
             },
             yAxis: {
                 min: 0,
@@ -61,10 +72,6 @@
             {
                 name:'Progression',
                 data: Progress
-            },
-            {
-                name:'Total',
-                data: Total
             }],
             credits: {
                         enabled: false

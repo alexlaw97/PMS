@@ -239,36 +239,30 @@ app.post('/newproj' , (req, res) => {
     .catch((error) => {
       console.log(error);
     })
-    return false;
+    res.redirect('back');
   })
 
   // Employer chart diagram
-  app.get('/chart',(req, res) => {
+  app.get('/employerchart',(req, res) => {
     var emp = require('./Empdb');
     var task = require('./taskdb');
     var persondept = req.session.department;
-    var personid = req.session.pid;
     var personname = req.session.name;
+    var personid = req.session.pid;
     emp.find({
       "Department" : persondept
     })
     .then((response) => {
-      for(var x = 0; x< response.length; x++){
-        if(response[x].Emp_id != personid){
-          task.find({
-            "Task_id" : response[x].Emp_id
-          })
+          task.find({})
           .then((response2) =>{
             res.render("pages/empchart",{
               data : response,
               data2 : response2,
-              name : personname
+              data3 : personid
             });
           })
-        }
-      }
-    })
- });
+        })
+      });
 
 
 //Main page of Employer Page (Nav Page)
@@ -420,16 +414,11 @@ app.get('/psen', loginSession, (req, res) => {
   var projecid;
   var proj1 = [];
   var proj2 = [];
-  var it1;
-  var it2 = [];
-  var it3 = [];
-  proj.find({
-    
-  })
+  proj.find({})
   .then((response) => {
     for(x=0;x<response.length;x++)
     {
-      
+      // console.log(personid);
       projecid = response[x].Project_id;
       if(x < 1)
       {  
@@ -513,6 +502,7 @@ app.get('/psen', loginSession, (req, res) => {
         "Req_id" : proj1
       })
       .then((response2) => {
+        console.log(response2);
         res.render("pages/employer",{
           requirement : response2,
         });
@@ -779,8 +769,10 @@ app.post('/Req',(req, res) => {
   var req_tbl = require('./reqdb');
   var proj_tbl = require('./Projdb');
   var pros_tbl = require('./prosdb');
+  var task_tbl = require('./taskdb');
   var date = new Date();
   date.setHours(date.getHours() + 8);
+  var personid = req.session.pid;
   var part = req.body.parts;
   var id = req.body.reqid;
   console.log(id);
@@ -949,7 +941,27 @@ app.post('/Req',(req, res) => {
                     }
                       },
                     function(result){
-                      console.log("Update Successful");
+                      task_tbl.find({
+                        "Task_id" : personid
+                      })
+                      .then((response) => {
+                        var comp = response.Complete_tasks;
+                        var prog = response.Progression;
+                        comp++;
+                        prog--;
+                        task_tbl.updateOne({
+                          "Task_id" : personid
+                        },
+                        {
+                          $set:{
+                            "Complete_tasks" : comp,
+                            "Progression" : prog
+                          }
+                        },
+                        function(result3){
+                          res.send("<script>alert('Update Successful')</script>");
+                        })
+                      })
                     })
                     });
           break;

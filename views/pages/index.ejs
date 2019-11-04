@@ -7,11 +7,12 @@
 </head>
 
 <body>
-  <a href="chart">Employer Performance</a>
   <!-- <div>
     <button type="button" class="btn btn-primary" id="btnbtn" data-toggle="modal" data-target="#newprojmodal">Create Project</button>
     </div> -->
-
+    <form action="employerchart" method="GET">
+        <button type="submit">Employer</button>
+      </form>
     <!-- Modal -->
     <div class="modal fade" id="newprojmodal" tabindex="-1" role="dialog"  aria-hidden="true">
       <div class="modal-dialog" role="document">
@@ -114,6 +115,8 @@
             </tbody>
           </table>
         </div>
+
+       
       </body>
     
     
@@ -134,9 +137,6 @@
             $("#proj_tbl_filter").detach().appendTo('#search_project');
         }
         });
-        function preventBack(){window.history.forward();}
-            setTimeout("preventBack()", 0);
-            window.onunload=function(){null};
     } );
 
     function getprojid(id){
