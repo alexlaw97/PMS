@@ -9,8 +9,7 @@ const axios = require('axios')
 const app = express();
 var ps =[];
 var totsks = [];
-var totaltasks = [];
-var progresstasks = [];
+
 const db = "mongodb+srv://admin:abc0123@cluster0-k1y0a.mongodb.net/pms?retryWrites=true&w=majority";
 
 const PORT = process.env.PORT || 5000
@@ -109,36 +108,41 @@ app.post('/newproj' , (req, res) => {
   var emptask = [];
   var date = new Date();
   var projid;
-
+  var totaltasks = [];
+  var progresstasks = [];
   //Push all the selected employer id into a array
   emptask.push(req.body.selectedprod,req.body.selectedit,req.body.selectedtest,req.body.selectedmass,req.body.selectedquality,req.body.selectedship);
 
-
      // Calculation of total task and progression
-     for(var x = 0; x < emptask.length; x++){
-      
-      tasks.findOne({
-        "Task_id" : emptask[x]
+      emptask.sort();
+      console.log(emptask);
+      tasks.find({
+        "Task_id" : emptask
       })
       .then((response3) => {
-        var total = response3.Total_tasks;  
-        var progress = response3.Progression;
-        
-        total++;
-        progress++;
-        if(totaltasks.length +1  > emptask.length ){
-          totaltasks.length =0;
-          progresstasks.length =0;
-          totaltasks.push(total);
-          progresstasks.push(progress);
-        }
-        else{
-          totaltasks.push(total);
-          progresstasks.push(progress);
+        for(x=0;x<response3.length;x++){
+          console.log(response3[x]);
+          var id = response3[x].Task_id;
+          var total = response3[x].Total_tasks;  
+          var progress = response3[x].Progression;
+          total++;
+          progress++;
+          tasks.updateOne({
+            "Task_id" : id
+          },
+          { 
+            $set:{
+              "Total_tasks" : total,
+              "Progression" : progress
+            }
+          },
+          function(result){
+            console.log("Update Successful");
+          })
         }
       })
-    }
-
+   
+    
   insproj
   .find()
   .sort({"_id":-1})
@@ -202,25 +206,8 @@ app.post('/newproj' , (req, res) => {
       })
 
      
-     
-      // console.log(emptask.length);
-      // var tsk = totaltasks[1];
-      // console.log(tsk);
-    // Update all the selected employers task number
-      for(var x = 0; x < emptask.length; x++){
-            tasks.updateOne({
-              "Task_id" : emptask[x]
-            },
-          { $set:{
-                  "Total_tasks" : totaltasks[x],
-                  "Progression" : progresstasks[x]
-                  
-                  }
-          },
-          function(result){
-            console.log("Update Successful");
-          });
-      }
+    
+    
     
 
       // Save new project into mongodb
@@ -502,7 +489,6 @@ app.get('/psen', loginSession, (req, res) => {
         "Req_id" : proj1
       })
       .then((response2) => {
-        console.log(response2);
         res.render("pages/employer",{
           requirement : response2,
         });
@@ -945,8 +931,9 @@ app.post('/Req',(req, res) => {
                         "Task_id" : personid
                       })
                       .then((response) => {
-                        var comp = response.Complete_tasks;
-                        var prog = response.Progression;
+                        console.log(response);
+                        var comp = response[0].Complete_tasks;
+                        var prog = response[0].Progression;
                         comp++;
                         prog--;
                         task_tbl.updateOne({
@@ -959,7 +946,7 @@ app.post('/Req',(req, res) => {
                           }
                         },
                         function(result3){
-                          res.send("<script>alert('Update Successful')</script>");
+                          console.log("Update Success");
                         })
                       })
                     })
@@ -996,8 +983,10 @@ app.post('/status' , (req, res) => {
   var pros_tbl = require('./prosdb');
   var prod_tbl = require('./prodDb');
   var dev_tbl = require('./devdb');
+  var task_tbl = require('./taskdb');
   var projid = req.body.projectid;
   var persondept = req.session.department;
+  var personid = req.session.pid;
   var date = new Date();
   var id = req.session.pid;
   var dept = req.session.department;
@@ -1023,14 +1012,33 @@ app.post('/status' , (req, res) => {
           }
         },
         function(result){
-          console.log("Update Successful");
-          
-          
+          task_tbl.find({
+            "Task_id" : personid
+          })
+          .then((response) => {
+            console.log(response);
+            var comp = response[0].Complete_tasks;
+            var prog = response[0].Progression;
+            comp++;
+            prog--;
+            task_tbl.updateOne({
+              "Task_id" : personid
+            },
+            {
+              $set:{
+                "Complete_tasks" : comp,
+                "Progression" : prog
+              }
+            },
+            function(result3){
+              console.log("Update Success");
+            })
+          })
         });
       });
     }
 
-    //Testing phase yes == true and else no will be back to installation phase
+    //Testing phase yes == true and else will be back to installation phase
     else if(persondept == "Testing")
     {
     if(rez == "yes")
@@ -1054,7 +1062,27 @@ app.post('/status' , (req, res) => {
           }
         },
         function(result){
-          console.log("Update Successful");
+          task_tbl.find({
+            "Task_id" : personid
+          })
+          .then((response) => {
+            var comp = response[0].Complete_tasks;
+            var prog = response[0].Progression;
+            comp++;
+            prog--;
+            task_tbl.updateOne({
+              "Task_id" : personid
+            },
+            {
+              $set:{
+                "Complete_tasks" : comp,
+                "Progression" : prog
+              }
+            },
+            function(result3){
+              console.log("Update Success");
+            })
+          })
         });
       });
     }
@@ -1079,7 +1107,24 @@ app.post('/status' , (req, res) => {
           }
         },
         function(result){
-          console.log("Update Successful");
+          task_tbl.find({
+            "Task_id" : personid
+          })
+          .then((response) => {
+            var prog = response[0].Progression;
+            prog--;
+            task_tbl.updateOne({
+              "Task_id" : personid
+            },
+            {
+              $set:{
+                "Progression" : prog
+              }
+            },
+            function(result3){
+              console.log("Update Success");
+            })
+          })
         });
       });
     }
@@ -1105,7 +1150,27 @@ app.post('/status' , (req, res) => {
           }
         },
         function(result){
-          console.log("Update Successful");
+          task_tbl.find({
+            "Task_id" : personid
+          })
+          .then((response) => {
+            var comp = response[0].Complete_tasks;
+            var prog = response[0].Progression;
+            comp++;
+            prog--;
+            task_tbl.updateOne({
+              "Task_id" : personid
+            },
+            {
+              $set:{
+                "Complete_tasks" : comp,
+                "Progression" : prog
+              }
+            },
+            function(result3){
+              console.log("Update Success");
+            })
+          })
         });
       });
     }
@@ -1161,13 +1226,34 @@ app.post('/status' , (req, res) => {
                       Serial_number : generateSerial()
                     })
                     device.save().then((result) => {
-                      console.log("Insert Successful");
+                     console.log("Update Sucessful");
                     })
                   })
                   .catch((error) => {
                     console.log(error);
                   })
                 } 
+                task_tbl.find({
+                  "Task_id" : personid
+                })
+                .then((response) => {
+                  var comp = response[0].Complete_tasks;
+                  var prog = response[0].Progression;
+                  comp++;
+                  prog--;
+                  task_tbl.updateOne({
+                    "Task_id" : personid
+                  },
+                  {
+                    $set:{
+                      "Complete_tasks" : comp,
+                      "Progression" : prog
+                    }
+                  },
+                  function(result3){
+                    console.log("Update Success");
+                  })
+                })
             })
           });
         })
@@ -1194,7 +1280,24 @@ app.post('/status' , (req, res) => {
             }
           },
           function(result){
-            console.log("Update Successful");
+            task_tbl.find({
+              "Task_id" : personid
+            })
+            .then((response) => {
+              var prog = response[0].Progression;
+              prog--;
+              task_tbl.updateOne({
+                "Task_id" : personid
+              },
+              {
+                $set:{
+                  "Progression" : prog
+                }
+              },
+              function(result3){
+                console.log("Update Success");
+              })
+            })
           });
         });
       }
