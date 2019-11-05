@@ -4,6 +4,10 @@
     text-align: center;
   }
   
+  .proj_tbl{
+    width: 100px;
+  }
+
   .container .progress {
     margin: 0 auto;
     width: 400px;

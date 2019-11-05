@@ -10,6 +10,7 @@ const app = express();
 var ps =[];
 var totsks = [];
 
+
 const db = "mongodb+srv://admin:abc0123@cluster0-k1y0a.mongodb.net/pms?retryWrites=true&w=majority";
 
 const PORT = process.env.PORT || 5000
@@ -256,12 +257,18 @@ app.post('/newproj' , (req, res) => {
 app.get('/mainemp',(req, res) => {
   var personid = req.session.pid;
   var emp = require('./Empdb');
+  var dept = req.session.department;
+  var personname = req.session.name;
+  var personpos = req.session.position;
   emp.find({
     "Emp_id" : personid
   })
   .then((response) => {
     res.render("pages/mainemp",{
-      employer : response
+      employer : response,
+      personame : personname,
+      persondepart : dept,
+      personposition : personpos
     });
   })
  
@@ -271,12 +278,18 @@ app.get('/mainemp',(req, res) => {
 app.get('/task',(req,res) => {
   var proj = require('./Projdb');
   var emp = require('./Empdb');
+  var dept = req.session.department;
+  var personname = req.session.name;
+  var personpos = req.session.position;
   proj.find()
   .then((response) => {
         emp.find().then((response2) => {
           res.render("pages/tasklist",{
             project : response,
-            employerlist : response2
+            employerlist : response2,
+            personame : personname,
+            persondepart : dept,
+            personposition : personpos
           });
         })
       })
@@ -289,12 +302,15 @@ app.get('/mytask',(req,res) => {
   var personid = req.session.pid;
   var date,date2;
   var datarray = [];
-
+  var dept = req.session.department;
+  var personname = req.session.name;
+  var personpos = req.session.position;
   if(persondept == "Production"){
     proj.find({
       "Production" : personid
     })
     .then((response) => {
+      console.log(response);
       for(var x =0; x <response.length; x++){
       date2 = response[x].Deadline;
       date = new Date();
@@ -305,7 +321,10 @@ app.get('/mytask',(req,res) => {
      
       res.render("pages/mytask",{
         project : response,
-        duration : datarray
+        duration : datarray,
+        personame : personname,
+        persondepart : dept,
+        personposition : personpos
       });
     })
   }
@@ -324,7 +343,10 @@ app.get('/mytask',(req,res) => {
        
         res.render("pages/mytask",{
           project : response,
-          duration : datarray
+          duration : datarray,
+          personame : personname,
+          persondepart : dept,
+          personposition : personpos
         });
     })
   }
@@ -343,7 +365,10 @@ app.get('/mytask',(req,res) => {
        
         res.render("pages/mytask",{
           project : response,
-          duration : datarray
+          duration : datarray,
+          personame : personname,
+          persondepart : dept,
+          personposition : personpos
         });
     })
   }
@@ -362,7 +387,10 @@ app.get('/mytask',(req,res) => {
        
         res.render("pages/mytask",{
           project : response,
-          duration : datarray
+          duration : datarray,
+          personame : personname,
+          persondepart : dept,
+          personposition : personpos
         });
     })
   }
@@ -381,7 +409,10 @@ app.get('/mytask',(req,res) => {
        
         res.render("pages/mytask",{
           project : response,
-          duration : datarray
+          duration : datarray,
+          personame : personname,
+          persondepart : dept,
+          personposition : personpos
         });
     })
   }
@@ -401,6 +432,9 @@ app.get('/psen', loginSession, (req, res) => {
   var projecid;
   var proj1 = [];
   var proj2 = [];
+  var dept = req.session.department;
+  var personname = req.session.name;
+  var personpos = req.session.position;
   proj.find({})
   .then((response) => {
     for(x=0;x<response.length;x++)
@@ -478,7 +512,10 @@ app.get('/psen', loginSession, (req, res) => {
       })
       .then((response2) => {
         res.render("pages/software",{
-          project : response2
+          project : response2,
+          personame : personname,
+          persondepart : dept,
+          personposition : personpos
           
         });
       })
@@ -491,6 +528,9 @@ app.get('/psen', loginSession, (req, res) => {
       .then((response2) => {
         res.render("pages/employer",{
           requirement : response2,
+          personame : personname,
+          persondepart : dept,
+          personposition : personpos
         });
       })
     } 
@@ -502,7 +542,10 @@ app.get('/psen', loginSession, (req, res) => {
       })
       .then((response2) => {
         res.render("pages/testing",{
-          project : response2
+          project : response2,
+          personame : personname,
+          persondepart : dept,
+          personposition : personpos
         });
       })
     }
@@ -514,7 +557,10 @@ app.get('/psen', loginSession, (req, res) => {
       })
       .then((response2) => {
         res.render("pages/software",{
-          project : response2
+          project : response2,
+          personame : personname,
+          persondepart : dept,
+          personposition : personpos
         });
       })
     }
@@ -526,7 +572,10 @@ app.get('/psen', loginSession, (req, res) => {
       })
       .then((response2) => {
         res.render("pages/quality",{
-          project : response2
+          project : response2,
+          personame : personname,
+          persondepart : dept,
+          personposition : personpos
         });
       })
     }
@@ -550,7 +599,10 @@ app.get('/psen', loginSession, (req, res) => {
           
             res.render("pages/shipping",{
               project : response2,
-              projdealer : response3
+              projdealer : response3,
+              personame : personname,
+              persondepart : dept,
+              personposition : personpos
           })
         });
       })
@@ -566,9 +618,8 @@ app.get('/pmng', loginSession, (req, res) => {
   var EMP = require('./Empdb');
   var PSB = require('./prosdb');
   var total = [];
-
   var assign = [];
-  var dept = req.session.department;
+
   PJB.find({})
   .then((response) => {
     console.log("Dept:",dept);
@@ -618,7 +669,10 @@ app.get('/pmng', loginSession, (req, res) => {
           res.render("pages/index", {
             project : response,
             employer : response2,
-            phase : ps
+            phase : ps,
+            personame : personname,
+            persondepart : dept,
+            personposition : personpos
           })
         })
         //   }

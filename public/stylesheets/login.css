@@ -17,11 +17,11 @@ align-content: center;
 }
 
 .card{
-height: 370px;
+height: 300px;
 margin-top: auto;
 margin-bottom: auto;
 width: 400px;
-background-color: rgba(0,0,0,0.5) !important;
+background-color: rgba(122, 114, 114, 0.774) !important;
 }
 
 .social_icon span{
@@ -72,8 +72,9 @@ margin-right: 5px;
 
 .login_btn{
 color: black;
-background-color: #FFC312;
-width: 100px;
+background-color: rgb(255, 221, 29);
+width: 300px;
+height:300ox;
 }
 
 .login_btn:hover{

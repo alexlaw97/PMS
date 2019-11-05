@@ -20,7 +20,7 @@ var projSchema = new mongoose.Schema({
     testing_end: "",
     ship_start: "",
     ship_end: "",
-    Deadline:"",
+    Deadline: Date,
     Project_title:String,
     Pros_id:String,
     Req_id:String,

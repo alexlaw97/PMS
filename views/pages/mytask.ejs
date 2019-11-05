@@ -2,9 +2,9 @@
 <html>
     <head>
             <% include ../partials/header.ejs %>
-            <button class="btn btn-warning float-right mt-2" onclick="location.href='/logout'">Logout</button>
     </head>
     <body>
+        <% include ../partials/navemp.ejs %>
         <div class="container">
             <h2 style="text-align: center">Project List</h2>
                     <div class="table table-striped" id="proj_table" align="center">
@@ -42,7 +42,10 @@
                             
                               });
                           });  
-                     
+                          $("#menu-toggle").click(function(e) {
+                              e.preventDefault();
+                              $("#wrapper").toggleClass("toggled");
+                            });
                           
                </script>
 </html>

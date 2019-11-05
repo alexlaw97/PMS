@@ -2,9 +2,11 @@
     <head>
         <% include ../partials/header.ejs %>
         <link rel="stylesheet" type="text/css" href="/stylesheets/mainemp.css" />
-        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+        <!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet"> -->
             </head>
+            <body>
+            <% include ../partials/navemp.ejs %>    
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-4 col-sm-6 d-flex">
@@ -53,4 +55,11 @@
                         </div>
                     </div>
                 </div>
-                </html>
+            </body>
+            <script>
+               $("#menu-toggle").click(function(e) {
+                    e.preventDefault();
+                    $("#wrapper").toggleClass("toggled");
+                    });
+                </script>
+        </html>
