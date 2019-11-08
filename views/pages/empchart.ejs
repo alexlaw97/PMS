@@ -4,7 +4,8 @@
         <% include ../partials/header.ejs %>
     </head>
     <body>
-        <div id="container" style="min-width: 310px; max-width: 800px; height: 400px; margin: 0 auto"></div>
+        <% include ../partials/nav2.ejs %>
+        <div id="container" style="min-width: 310px; margin: 0 auto"></div>
         <%var taskid = [];%>
         <%var emptask = [];%>
         <%for(x=0;x<data.length;x++){%>
@@ -46,7 +47,7 @@
                 type: 'bar'
             },
             title: {
-                text: 'Employer Performance'
+                text: 'Employee Task Lists'
             },
             xAxis: {
                 categories: personname
@@ -54,7 +55,7 @@
             yAxis: {
                 min: 0,
                 title: {
-                    text: 'Total workloads of employer'
+                    text: 'Total workloads of employee'
                 }
             },
             legend: {

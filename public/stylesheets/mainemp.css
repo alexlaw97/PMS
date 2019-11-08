@@ -1,5 +1,5 @@
 .big-centered-icon {
-    font-size: 144px;
+    font-size: 200px;
     position: absolute;
     top: 0;
     bottom: 0;
@@ -15,19 +15,36 @@
     position:relative;
     margin:8px;
     width: 100%;
-    padding-bottom: 75%
+    padding-bottom: 75%;
+    transition-property: background, border-radius;
+  transition-duration: .2s, 1s;
+  transition-timing-function: linear;
+    
 }
 div.class-box > div { 
     position:absolute;
-    top:0;bottom:0;
-    left:0;right:0;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
     overflow:hidden;
-    padding-top:15%
+    padding-top:15%;
+    border-radius: 30px;
+
+}
+.class-box:hover { 
+    background: #0f4bee;
+  border-radius: 50%;
+
+}
+.class-box:hover  .bg-primary  { 
+    background: none !important;
+
 }
 .class-box .title-bg{
-    font-size:24px;
-    color:#000;
-    margin-top: 40%;
+    font-size:35px;
+    color:rgb(255, 255, 255);
+    margin-top: 46%;
 }
 .container-fluid{
     margin-top: 10%; 
@@ -42,4 +59,14 @@ div.class-box > div {
     left: 0;
     top: 0;
     z-index: 1;
-    }
+}
+.bg-primary{
+    background-color: black !important;
+}
+.icon-list {
+    color:white;
+}
+
+.icon-briefcase {
+    color:white;
+}

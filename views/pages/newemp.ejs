@@ -2,12 +2,12 @@
 <html>
     <head>
             <% include ../partials/header.ejs %>
-            <button class="btn btn-warning float-right mt-2" onclick="location.href='/logout'">Logout</button>
     </head>
     <body>
+            <% include ../partials/nav.ejs %>
             <div class="container">
-                    <h2 style="text-align: center">Register New Employer</h2>
-                    <form action="newemp" method="POST">
+                    <h2 style="text-align: center">Register New Employee</h2>
+                    <form action="newemp" method="POST" >
                     <div class="form-group">
                         <label for="usr">Name:</label>
                         <input type="text" class="form-control" id="usr" name="name">
@@ -26,15 +26,21 @@
                         </div>
                     <div class="form-group">
                             <label for="usr">Username:</label>
-                            <input type="text" class="form-control" id="usr" name="username">
+                            <input type="text" class="form-control" id="usr" name="username" autocomplete="new-password">
                           </div>
                     <div class="form-group">
                         <label for="usr">Password:</label>
-                        <input type="password" class="form-control" id="usr" name="password">
+                        <input type="password" class="form-control" id="usr" name="password" autocomplete="new-password">
                         </div>
                     <button class="btn btn-primary" type="subtmit">Submit</button>
                     </form>
                   </div>
                   
     </body>
+    <script>
+    $("#menu-toggle").click(function(e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+            });
+            </script>
 </html>

@@ -3,12 +3,12 @@
     <head>
         <% include ../partials/header.ejs %>
         <title>Split Work Page</title>
-        <button class="btn btn-warning float-right mt-2" onclick="location.href='/logout'">Logout</button>
     </head>
     <body>
+        <% include ../partials/nav2.ejs %>
         <div>
         <form action = "/update/id" method = "POST">
-        <h7 class="sp1">Choose Employer</h7>
+        <h7 class="sp1">Choose Employee</h7>
         <div class="input-group mb-3">
             <div class="form-group">
                 <select class="form-control" name="selected">
@@ -26,7 +26,7 @@
     </div>
     <table id="emp_tbl" class="table table-borderd table-striped" align="center">
         <thead>
-          <th>Employer name</th>
+          <th>Employee name</th>
           <th>Position</th>
           <th>Tasks number</th>
         </thead>

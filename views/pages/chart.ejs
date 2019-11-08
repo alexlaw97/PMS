@@ -7,6 +7,7 @@
 </head>
 
 <body>
+    <% include ../partials/nav2.ejs %>
     <div class="chart-outer">
         <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
         <div class="checkbox" style="text-align:center;">
@@ -16,7 +17,7 @@
     </div>
 </body>
     <script>
-        var phase = ["Phase 1" , "Phase 2" , "Phase 3" , "Phase 4" , "Phase 5"]
+        var phase = ["Installation Phase" , "Software Phase" , "Testing Phase" , "Mass Production Phase" , "Quality Assurance Phase"]
         var averages = [];
         var project = [];
         var avgvalue, curvalue;
@@ -32,16 +33,23 @@
                              '<%}%>'
         Highcharts.chart('container', {
             exporting: {
-                enabled: false
+                buttons: {
+                    contextButton: {
+                        text:'Print',
+                        onclick: function () {
+                            this.print();
+                        }
+                    }
+                }
             },
             chart: {
-                type: 'spline'
+                type: 'column'
             },
             title: {
-                text: 'Usage Time Of Each Phase'
+                text: 'Usage Time of Phases '
             },
             subtitle: {
-                text: 'Comparing Between Average Time and Current Project Time'
+                text: 'Comparing between average time of all project (per item) and total time of current project (per item)'
             },
             xAxis: {
                 categories: phase
@@ -52,7 +60,7 @@
                 },
                 labels: {
                 formatter: function() {
-                    return this.value + ' days';
+                    return this.value + ' Hours';
                 }
                 }
             },
@@ -70,14 +78,14 @@
                 }
             },
             series: [{
-                name: 'Average Project  (days)',
+                name: 'All Project',
                 marker: {
                 symbol: 'square'
                 },
                 data: averages
 
             }, {
-                name: 'Current Project  (days)',
+                name: 'Current Project',
                 marker: {
                 symbol: 'diamond'
                 },
@@ -87,17 +95,21 @@
                 enabled: false
             },
             });
-            function toggleDataTable() {
-                var chart = $('#container').highcharts()
-                if (chart.options.exporting.showTable) {
-                var element = document.getElementById("highcharts-data-table-0");
-                element.parentNode.removeChild(element);
-                }
-                chart.update({
-                exporting: {
-                    showTable: !chart.options.exporting.showTable
-                }
-                });
+        function toggleDataTable() {
+            var chart = $('#container').highcharts()
+            if (chart.options.exporting.showTable) {
+            var element = document.getElementById("highcharts-data-table-0");
+            element.parentNode.removeChild(element);
             }
+            chart.update({
+            exporting: {
+                showTable: !chart.options.exporting.showTable
+            }
+            });
+            }
+        $("#menu-toggle").click(function(e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+            });
     </script>
 </html>

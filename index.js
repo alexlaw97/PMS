@@ -41,11 +41,25 @@ app.get('/',(req, res) => {
   // res.render("pages/newemp");
 });
 
+app.get('/newemp',(req, res) => {
+  var dept = req.session.department;
+  var personname = req.session.name;
+  var personpos = req.session.position;
+ res.render("pages/newemp",{
+   personame : personname,
+   persondepart : dept,
+   personposition : personpos
+ });
+});
+
 // Project Manager Getting all employer data
 app.get('/projmng' , loginSession, (req, res) => {
   var emp = require('./Empdb');
   var product = require('./prodDb');
   var add = require('./deaDb');
+  var dept = req.session.department;
+  var personname = req.session.name;
+  var personpos = req.session.position;
   emp.find({
     "Department" : "Production",
     "Position" : "Senior"
@@ -88,7 +102,10 @@ app.get('/projmng' , loginSession, (req, res) => {
                   ship : response4,
                   mass : response5,
                   quality :response6,
-                  dealers : response7
+                  dealers : response7,
+                  personame : personname,
+                  persondepart : dept,
+                  personposition : personpos
                   })
                 }) 
               })
@@ -235,7 +252,6 @@ app.post('/newproj' , (req, res) => {
     var emp = require('./Empdb');
     var task = require('./taskdb');
     var persondept = req.session.department;
-    var personname = req.session.name;
     var personid = req.session.pid;
     emp.find({
       "Department" : persondept
@@ -246,7 +262,7 @@ app.post('/newproj' , (req, res) => {
             res.render("pages/empchart",{
               data : response,
               data2 : response2,
-              data3 : personid
+              data3 : personid,
             });
           })
         })
@@ -619,6 +635,11 @@ app.get('/pmng', loginSession, (req, res) => {
   var PSB = require('./prosdb');
   var total = [];
   var assign = [];
+  var datearray = [];
+  var date, date2;
+  var dept = req.session.department;
+  var personname = req.session.name;
+  var personpos = req.session.position;
 
   PJB.find({})
   .then((response) => {
@@ -657,6 +678,11 @@ app.get('/pmng', loginSession, (req, res) => {
         }
         
       }
+      date2 = response[x].Deadline;
+      date = new Date();
+      let Difference = Math.abs(date2.getTime() - date.getTime());
+      var different = Math.ceil(Difference / (1000 * 3600 * 24));
+      datearray.push(different);
       //assign.push(assignid);
     }
   
@@ -672,7 +698,8 @@ app.get('/pmng', loginSession, (req, res) => {
             phase : ps,
             personame : personname,
             persondepart : dept,
-            personposition : personpos
+            personposition : personpos,
+            duration : datearray
           })
         })
         //   }
@@ -1420,64 +1447,74 @@ app.post('/newemp' , (req, res) => {
 app.post('/comparedate' , (req, res) => {
   var proj_tbl = require('./Projdb');
   var projectid = req.body.id;
+  var dept = req.session.department;
+  var personname = req.session.name;
+  var personpos = req.session.position;
   var avgtime = [];
+  var quantity;
   proj_tbl.find({})
   .then((response) => {
-    var count, totalinsert, totalsof, totaltest, totalmas, totalquality, averageinsert, averagesoftware, averagequality, averagemass, averagetesting;
-    count = totalinsert = totalsof = totaltest = totalmas = totalquality = averageinsert = averagesoftware = averagemass = averagetesting = averagequality = 0;
+    var countp1, countp2, countp3, countp4, countp5, totalinsert, totalsof, totaltest, totalmas, totalquality, averageinsert, averagesoftware, averagequality, averagemass, averagetesting;
+    countp1 = countp2 = countp3 = countp4 = countp5 = totalinsert = totalsof = totaltest = totalmas = totalquality = averageinsert = averagesoftware = averagemass = averagetesting = averagequality = 0;
     for(var x = 0; x < response.length; x++){
       insert1 = response[x].Ins_start;
       insert2 = response[x].Ins_end;
+      quantity = response[x].Quantity;
+      soft = response[x].Soft_end;
+      test = response[x].testing_end;
+      mass = response[x].mass_end;
+      quality = response[x].quality_end;
       if(insert1 == "" || insert2 == ""){
+        
       }
       else{
         let insDifference = Math.abs(insert2.getTime() - insert1.getTime());
-        var differentins = Math.ceil(insDifference / (1000 * 3600 * 24));
+        var differentins = Math.ceil(insDifference / (1000 * 3600));
         totalinsert += differentins;
-      }
+        countp1++;
+        if(soft == "" || insert2 == ""){
 
-      soft = response[x].Soft_end;
-      if(soft == "" || insert2 == ""){
-      }
-      else{
-        let sofDifference = Math.abs(soft.getTime() - insert2.getTime());
-        var differentsof = Math.ceil(sofDifference / (1000 * 3600 * 24));
-        totalsof += differentsof;
+        }
+        else{
+          let sofDifference = Math.abs(soft.getTime() - insert2.getTime());
+          var differentsof = Math.ceil(sofDifference / (1000 * 3600));
+          totalsof += differentsof;
+          countp2++;
+          if(test == "" || soft == ""){
+
+          }
+          else{
+            let testDifference = Math.abs(test.getTime() - soft.getTime());
+            var differenttest = Math.ceil(testDifference / (1000 * 3600));
+            totaltest += differenttest;
+            countp3++;
+            if(test == "" || mass == ""){
+
+            }
+            else{
+              let masDifference = Math.abs(mass.getTime() - test.getTime());
+              var differentmas = Math.ceil(masDifference / (1000 * 3600));
+              totalmas += differentmas; 
+              countp4++;
+              if(quality == "" || mass == ""){
+
+              }
+              else{
+              let qualityDifference = Math.abs(quality.getTime() - mass.getTime());
+              var differentquality = Math.ceil(qualityDifference / (1000 * 3600));
+              totalquality += differentquality;
+              countp5++;
+              }
+            }
+          }
+        }
+      } 
     }
-
-      test = response[x].testing_end;
-      if(test == "" || soft == ""){
-      }
-      else{
-        let testDifference = Math.abs(test.getTime() - soft.getTime());
-        var differenttest = Math.ceil(testDifference / (1000 * 3600 * 24));
-        totaltest += differenttest;
-      }
-
-      mass = response[x].mass_end;
-      if(test == "" || mass == ""){
-      }
-      else{
-        let masDifference = Math.abs(mass.getTime() - test.getTime());
-        var differentmas = Math.ceil(masDifference / (1000 * 3600 * 24));
-        totalmas += differentmas;  
-    }
-
-      quality = response[x].quality_end;
-      if(quality == "" || mass == ""){
-      }
-      else{
-      let qualityDifference = Math.abs(quality.getTime() - mass.getTime());
-      var differentquality = Math.ceil(qualityDifference / (1000 * 3600 * 24));
-      totalquality += differentquality;
-      }
-      count++;
-    }
-    averageinsert = totalinsert/ count; 
-    averagesoftware = totalsof/ count; 
-    averagetesting = totaltest/ count; 
-    averagemass = totalmas/ count;
-    averagequality = totalquality/ count; 
+    averageinsert = totalinsert/ countp1; 
+    averagesoftware = totalsof/ countp2; 
+    averagetesting = totaltest/ countp3; 
+    averagemass = (totalmas/ countp4)/quantity;
+    averagequality = (totalquality/ countp5)/quantity; 
     avgtime.push(averageinsert,averagesoftware,averagetesting,averagemass,averagequality);
     proj_tbl.find({
       "Project_id" : projectid
@@ -1492,7 +1529,7 @@ app.post('/comparedate' , (req, res) => {
           }
           else{
           let insDifference = Math.abs(curins2.getTime() - curins.getTime());
-          let differentins = Math.ceil(insDifference / (1000 * 3600 * 24));
+          var differentins = Math.ceil(insDifference / (1000 * 3600));
           }
 
           cursoft = response2[x].Soft_end;
@@ -1501,7 +1538,7 @@ app.post('/comparedate' , (req, res) => {
           }
           else{
           let sofDifference = Math.abs(cursoft.getTime() - curins2.getTime());
-          let differentsof = Math.ceil(sofDifference / (1000 * 3600 * 24));
+          var differentsof = Math.ceil(sofDifference / (1000 * 3600));
           }
 
           curtest = response2[x].testing_end;
@@ -1510,7 +1547,7 @@ app.post('/comparedate' , (req, res) => {
           }
           else{
           let testDifference = Math.abs(curtest.getTime() - cursoft.getTime());
-          let differenttest = Math.ceil(testDifference / (1000 * 3600 * 24));
+          var differenttest = Math.ceil(testDifference / (1000 * 3600));
           }
 
           curmas = response2[x].mass_end;
@@ -1519,23 +1556,26 @@ app.post('/comparedate' , (req, res) => {
           }
           else{
           let masDifference = Math.abs(curmas.getTime() - curtest.getTime());
-          let differentmas = Math.ceil(masDifference / (1000 * 3600 * 24));
+          var differentmas = Math.ceil(masDifference / (1000 * 3600)/quantity);
           }
 
           curquality = response2[x].quality_end;
           if(curquality == "" || curmas == ""){
-            differentquality = 0;
+            let differentqua = 0;
           }
           else{
           let qualityDifference = Math.abs(curquality.getTime() - curmas.getTime());
-          let differentquality = Math.ceil(qualityDifference / (1000 * 3600 * 24));
+          var differentqua = Math.ceil(qualityDifference / (1000 * 3600)/quantity);
           }
           
-          projduration.push(differentins,differentsof,differenttest,differentmas,differentquality);
+          projduration.push(differentins,differentsof,differenttest,differentmas,differentqua);
         }
         res.render("pages/chart", {
           average : avgtime,
-          current : projduration
+          current : projduration,
+          personame : personname,
+          persondepart : dept,
+          personposition : personpos
         });
       })
 })

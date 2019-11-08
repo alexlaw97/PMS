@@ -4,9 +4,9 @@
     <div class="bg-light border-right" id="sidebar-wrapper">
       <div class="sidebar-heading">
         <div>
-          <a class="navbar-brand" href="#">
+          <a class="navbar-brand" href="pmng">
             <img src="1.png" width="30" height="30" class="d-inline-block align-top" alt="blabla">
-            PMS
+            Product Management System
           </a>
         </div> 
         <div class="sidebar-content">
@@ -23,8 +23,11 @@
         </div>
       </div> 
       <div class="list-group list-group-flush">
-        <a href="#" class="list-group-item list-group-item-action bg-light">Dashboard</a>
-        <a href="employerchart" class="list-group-item list-group-item-action bg-light">Employer Performance</a>
+        <a href="pmng" class="list-group-item list-group-item-action bg-light">Dashboard</a>
+        <a href="employerchart" class="list-group-item list-group-item-action bg-light">Employee Task List</a>
+        <%if(persondepart == "IT"){%>
+          <a href="newemp" class="list-group-item list-group-item-action bg-light">Create Employee</a>
+          <%}%>
       </div>
     </div>
     <!-- /#sidebar-wrapper -->

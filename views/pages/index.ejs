@@ -3,12 +3,11 @@
 <head>
   <% include ../partials/header.ejs %>
   <link rel="stylesheet" type="text/css" href="/stylesheets/index.css">
-  <link rel="stylesheet" type="text/css" href="/stylesheets/nav.css">
   
 </head>
 <body>
   <% include ../partials/nav.ejs %>
-    <div class="table table-striped" id="proj_table" align="center">
+    <div class="table table-striped table-responsive" id="proj_table" align="center">
       <!-- Search form -->
       <div id="search_project" align="center"></div>
         <table id="proj_tbl"  >
@@ -17,6 +16,7 @@
             <th>Project Title</th>
             <th>Status</th>
             <th>Assigned to</th>
+            <th>Deadline(days)</th>
             <th>Progress</th>
             <th>Analysis</th>
             <th>Action</th>
@@ -30,6 +30,7 @@
               <% for(z=0;z<employer.length;z++){ %>
               <% if(employer[z].Emp_id == project[x].Production || employer[z].Emp_id == project[x].IT_Dept || employer[z].Emp_id == project[x].Testing_Dept || employer[z].Emp_id == project[x].Mass_Dept || employer[z].Emp_id == project[x].Ship_Dept){ %>
               <td><%= employer[z].Emp_name %></td>
+              <td><%= duration[x]%></td>
               <td>
                 <div class="container">
                   <div class="progress">
@@ -59,7 +60,7 @@
               <td><button class ="btn btn-outline-primary" type="submit" value='<%= project[x].Project_id  %>' name="id">View</button></td>
               </form>
               <%}%>
-              <td><button class="btn btn-primary btn-block" type="button" onclick="getprojid('<%= project[x].Project_id  %>')">Change Employer </button> </td>
+              <td><button class="btn btn-primary btn-block" type="button" onclick="getprojid('<%= project[x].Project_id  %>')">Switch Employee </button> </td>
               <%}%>
               <%}%>
             </tr>
@@ -81,6 +82,7 @@
           "lengthChange": false,
           "pageLength": 5,
           "dom":'<f>t<"row"<"col"p><"col">>',
+          'order':[[4,"asc"],[5,"asc"]],
           initComplete : function() {
             $("#proj_tbl_filter").detach().appendTo('#search_project');
         }
