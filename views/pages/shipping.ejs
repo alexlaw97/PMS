@@ -18,7 +18,6 @@
                                 </thead>
                                 <tbody>    
                                   <%for(x=0;x<project.length;x++){%>
-                                    <%for(x=0;x<projdealer.length;x++){%>
                                           <tr>
                                           <form action="status" method="POST">
                                           <td><input class="form-control-plaintext" type="text" name="projectid" value="<%= project[x].Project_id %>" readonly></td>
@@ -26,7 +25,6 @@
                                           <td><button type="button" class="btn btn-primary" id="btn" data-toggle="modal" data-target="#myModal" data-title = "<%= project[x].Project_title %>" data-deal = "<%= projdealer[x].Name %>" data-address = "<%= projdealer[x].Address %>" data-phone = "<%= projdealer[x].Phone %>" >Open modal</button></td>
                                           </form>
                                         </tr>
-                                      <%}%>
                                     <%}%>
                                     </tbody>
                                   </table>
@@ -40,7 +38,7 @@
 
                                     <!-- Modal Header -->
                                     <div class="modal-header">
-                                      <h4 class="modal-title">Modal Heading</h4>
+                                      <h4 class="col-12 modal-title text-center" >Dealer detail</h4>
                                       <button type="button" class="close" data-dismiss="modal">&times;</button>
                                     </div>
 

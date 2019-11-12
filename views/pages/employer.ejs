@@ -2,128 +2,177 @@
     <html>
         <head>
             <% include ../partials/header.ejs %>
-            <% include ../partials/_message.ejs %>
-            <button class="btn btn-warning float-right mt-2" onclick="location.href='/logout'">Logout</button>
+            <style>
+            .nav{
+                padding-left:15px !important;
+            }
+            </style>
     </head>
         <body>
-            
-            <%for(x=0;x<requirement.length;x++){%>
-                <form action="Req" method="POST">
-                    <div class="table table-striped" align="center" >
-                    <table id="table_id"  style="width:'100%'"> 
-                        <thead>
-                            Project <%= x+1 %>
-                        </thead>
-                            <thead>
-                                <tr>
-                                    <th>Part</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Screen</td>
-                                    <input type="hidden" name="reqid" value="<%= requirement[x].Req_id  %>">
-                                    <% if(requirement[x].Screen == "0"){ %>
-                                        <td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen">Done </button> </td>
-                                        <%}else{%>
-                                            <td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done </button> </td>
-                                            <%}%>
-                                </tr>
-                                <tr>
-                                        <td>Battery</td>
-                                        <% if(requirement[x].Battery == "0"){ %>
-                                            <td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Battery">Done </button> </td>
-                                            <%}else{%>
-                                                <td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done </button> </td>
-                                                <%}%>
-                                    </tr>
-                                    <tr>
-                                            <td>Processor</td>
-                                            <% if(requirement[x].Processor == "0"){ %>
-                                                <td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Processor">Done </button> </td>
-                                                <%}else{%>
-                                                    <td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done </button> </td>
-                                                    <%}%>
-                                        </tr>
-                                        <tr>
-                                                <td>Camera</td>
-                                                <% if(requirement[x].Camera == "0"){ %>
-                                                    <td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "camera">Done </button> </td>
+            <% include ../partials/navemp.ejs %>
+            <div class="row">
+            <div class="nav flex-column nav-pills col-lg-4" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <%for(x=0;x<requirement.length;x++){%>
+                        <%if(x == 0){ %>
+                            <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#tab<%=x%>" role="tab" aria-controls="v-pills-home" aria-selected="true">Project <%= title[x]%></a>
+                        <%}else{%>
+                            <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#tab<%=x%>" role="tab" aria-controls="v-pills-profile" aria-selected="true">Project <%= title[x] %></a>
+                            <%}}%>
+                  </div>
+                  <div class="tab-content col-lg-8" id="v-pills-tabContent">
+                        <%for(y=0;y<requirement.length;y++){%>   
+                            <%if(y == 0){%> 
+                                <div class="tab-pane fade show active" id="tab<%=y%>" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                                    <div class="table table-striped" align="center">
+                                        <table id="table_id"  style="width:'100%'"> 
+                                        <thead>Installation Phase</thead> 
+                                        <tbody>
+                                            <form action="Req" method="POST"> 
+                                                  <tr><td>Project ID</td><td><%= projid[y] %></td></tr>
+                                                  <tr><td>Project Title</td><td><%= title[y] %></td></tr>
+                                                  <input type="hidden" name="reqid" value="<%= requirement[y].Req_id  %>">
+                                                  <%if(requirement[y].Inner_Body == "0"){ %>
+                                                    <tr><td>Inner Body</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "inner_body">Done</button></td></tr>
                                                     <%}else{%>
-                                                        <td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done </button> </td>
-                                                        <%}%>
-                                            </tr>
-                                            <tr>
-                                                    <td>Memory</td>
-                                                    <% if(requirement[x].Memory == "0"){ %>
-                                                        <td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "memory">Done </button> </td>
-                                                        <%}else{%>
-                                                            <td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done </button> </td>
-                                                            <%}%>
-                                                </tr>
-                                                <tr>
-                                                        <td>Inner Body</td>
-                                                        <% if(requirement[x].Inner_Body == "0"){ %>
-                                                            <td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "inner_body">Done </button> </td>
+                                                        <tr><td>Inner Body</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done</button></td></tr>
+                                                        <%if(requirement[y].Motherboard == "0"){%>
+                                                            <tr><td>Motherboard</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "motherboard">Done</button></td></tr>
                                                             <%}else{%>
-                                                                <td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done </button> </td>
-                                                                <%}%>
-                                                    </tr>
-                                                    <tr>
-                                                            <td>Vibrator</td>
-                                                            <% if(requirement[x].Vibrator == "0"){ %>
-                                                                <td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "vibrator">Done </button> </td>
-                                                                <%}else{%>
-                                                                    <td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done </button> </td>
-                                                                    <%}%>
-                                                        </tr>
-                                                        <tr>
-                                                                <td>Speaker</td>
-                                                                <% if(requirement[x].Speaker == "0"){ %>
-                                                                    <td><button class="btn btn-primary btn-block" type="submit" name="parts" value ="speaker">Done </button> </td>
-                                                                    <%}else{%>
-                                                                        <td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done </button> </td>
-                                                                        <%}%>
-                                                            </tr>
-                                                            <tr>
-                                                                    <td>Motherboard</td>
-                                                                    <% if(requirement[x].Motherboard == "0"){ %>
-                                                                        <td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "motherboard">Done </button> </td>
-                                                                        <%}else{%>
-                                                                            <td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done </button> </td>
-                                                                            <%}%>
-                                                                </tr>
-                                                                <tr>
-                                                                        <td>Button</td>
-                                                                        <% if(requirement[x].Button == "0"){ %>
-                                                                            <td><button class="btn btn-primary btn-block" type="submit" name="parts" value ="button">Done </button> </td>
+                                                                <tr><td>Motherboard</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done</button></td></tr>
+                                                                <%if(requirement[y].Processor == "0"){%>
+                                                                    <tr><td>Processor</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Processor">Done</button></td></tr>
+                                                                    <%}else{%>                                                                            
+                                                                        <tr><td>Processor</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done</button></td></tr>
+                                                                        <% if(requirement[y].Vibrator == "0"){ %>
+                                                                            <tr><td>Vibrator</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "vibrator">Done</button></td></tr>
                                                                             <%}else{%>
-                                                                                <td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done </button> </td>
-                                                                                <%}%>
-                                                                    </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <br>
-                </form>
-            <%}%>
-    </body>
-    <script>
-    console.log(status);
-    $(document).ready(function() {
-        $('#table_id').DataTable({
-          "lengthChange": false,
-          
-          "info": false,
-          "ordering": false,
-        });
-    } );
+                                                                                <tr><td>Vibrator</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done</button></td></tr>
+                                                                                <% if(requirement[y].Speaker == "0"){ %>
+                                                                                    <tr><td>Speaker</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "speaker">Done</button></td></tr>
+                                                                                    <%}else{%>
+                                                                                        <tr><td>Speaker</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done</button></td></tr>
+                                                                                        <% if(requirement[y].Camera == "0"){ %>
+                                                                                            <tr><td>Camera</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "camera">Done</button></td></tr>
+                                                                                            <%}else{%>
+                                                                                                <tr><td>Camera</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done</button></td></tr>
+                                                                                                <% if(requirement[y].Memory == "0"){ %>
+                                                                                                    <tr><td>Memory</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "memory">Done</button></td></tr>   
+                                                                                                    <%}else{%>
+                                                                                                        <tr><td>Memory</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done</button></td></tr>
+                                                                                                        <% if(requirement[y].Battery == "0"){ %>
+                                                                                                            <tr><td>Battery</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Battery">Done</button></td></tr>
+                                                                                                            <%}else{%>
+                                                                                                                <tr><td>Battery</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done</button></td></tr>
+                                                                                                                <% if(requirement[y].Screen == "0"){ %>
+                                                                                                                    <tr><td>Speaker</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen">Done</button></td></tr>
+                                                                                                                    <%}else{%>
+                                                                                                                        <tr><td>Screen</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done</button></td></tr>
+                                                                                                                        <% if(requirement[y].Button == "0"){ %>
+                                                                                                                            <tr><td>Button</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "button">Done</button></td></tr>
+                                                                                                                            <%}else{%>
+                                                                                                                                <tr><td>Button</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done</button></td></tr>
+                                                                                                                            <%}%>                                                                
+                                                                                                                        <%}%>                                                                                            
+                                                                                                                    <%}%>                                                                                
+                                                                                                                <%}%>                                                            
+                                                                                                            <%}%>                                                        
+                                                                                                        <%}%>                                
+                                                                                                    <%}%>                            
+                                                                                                <%}%>
+                                                                                            <%}%>
+                                                                                        <%}%>
+                                                                                    </form>
+                                                                                </tbody>
+                                                                            </table>                                
+                                                                        </div>
+                                                                    </div>
+                            <%}else{%>
+                                <div class="tab-pane fade" id="tab<%=y%>" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                                    <div class="table table-striped" align="center" >                                
+                                        <table id="table_id"  style="width:'100%'"> 
+                                            <thead>Installation Phase</thead> 
+                                            <tbody>
+                                                <form action="Req" method="POST"> 
+                                                    <tr><td>Project ID</td><td><%= projid[y] %></td></tr>
+                                                    <tr><td>Project Title</td><td><%= title[y] %></td></tr>
+                                                    <input type="hidden" name="reqid" value="<%= requirement[y].Req_id  %>">
+                                                    <%if(requirement[y].Inner_Body == "0"){ %>
+                                                        <tr><td>Inner Body</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "inner_body">Done</button></td></tr>
+                                                        <%}else{%>
+                                                            <tr><td>Inner Body</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done</button></td></tr>
+                                                            <%if(requirement[y].Motherboard == "0"){%>
+                                                                <tr><td>Motherboard</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "motherboard">Done</button></td></tr>
+                                                                <%}else{%>
+                                                                    <tr><td>Motherboard</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done</button></td></tr>
+                                                                    <%if(requirement[y].Processor == "0"){%>
+                                                                        <tr><td>Processor</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Processor">Done</button></td></tr>
+                                                                        <%}else{%>                                                                            
+                                                                            <tr><td>Processor</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done</button></td></tr>
+                                                                            <% if(requirement[y].Vibrator == "0"){ %>
+                                                                                <tr><td>Vibrator</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "vibrator">Done</button></td></tr>
+                                                                                <%}else{%>
+                                                                                    <tr><td>Vibrator</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done</button></td></tr>
+                                                                                    <% if(requirement[y].Speaker == "0"){ %>
+                                                                                        <tr><td>Speaker</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "speaker">Done</button></td></tr>
+                                                                                        <%}else{%>
+                                                                                            <tr><td>Speaker</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done</button></td></tr>
+                                                                                            <% if(requirement[y].Camera == "0"){ %>
+                                                                                                <tr><td>Camera</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "camera">Done</button></td></tr>
+                                                                                                <%}else{%>
+                                                                                                    <tr><td>Camera</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done</button></td></tr>
+                                                                                                    <% if(requirement[y].Memory == "0"){ %>
+                                                                                                        <tr><td>Memory</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "memory">Done</button></td></tr>   
+                                                                                                        <%}else{%>
+                                                                                                            <tr><td>Memory</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done</button></td></tr>
+                                                                                                            <% if(requirement[y].Battery == "0"){ %>
+                                                                                                                <tr><td>Battery</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Battery">Done</button></td></tr>
+                                                                                                                <%}else{%>
+                                                                                                                    <tr><td>Battery</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done</button></td></tr>
+                                                                                                                    <% if(requirement[y].Screen == "0"){ %>
+                                                                                                                        <tr><td>Speaker</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen">Done</button></td></tr>
+                                                                                                                        <%}else{%>
+                                                                                                                            <tr><td>Screen</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done</button></td></tr>
+                                                                                                                            <% if(requirement[y].Button == "0"){ %>
+                                                                                                                                <tr><td>Button</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "button">Done</button></td></tr>
+                                                                                                                                <%}else{%>
+                                                                                                                                    <tr><td>Button</td><td><button class="btn btn-primary btn-block" type="submit" name="parts" value = "Screen" disabled>Done</button></td></tr>
+                                                                                                                                <%}%>                                                                
+                                                                                                                            <%}%>                                                                                            
+                                                                                                                        <%}%>                                                                                
+                                                                                                                    <%}%>                                                            
+                                                                                                                <%}%>                                                        
+                                                                                                            <%}%>                                
+                                                                                                        <%}%>                            
+                                                                                                    <%}%>
+                                                                                                <%}%>
+                                                                                            <%}%>
+                                                                                        </form>
+                                                                                    </tbody>
+                                                                                </table>                                
+                                                                            </div>
+                                                                        </div>
+                                                                    <%}%>
+                                                                <%}%>
+                                                            </div>
+                                                        </div>
+                                                    </body>
+                                                    <script>
+                                                    $(document).ready(function() {
+                                                        $('#table_id').DataTable({
+                                                        "lengthChange": false,
+                                                        
+                                                        "info": false,
+                                                        "ordering": false,
+                                                        });
+                                                    } );
 
-    function getreqid(id){
-        localStorage.setItem("requirement",id);
-        window.location.href="Req"
-    }
-
-        </script>
-</html>
+                                                    function getreqid(id){
+                                                        localStorage.setItem("requirement",id);
+                                                        window.location.href="Req"
+                                                    }
+                                                    $("#menu-toggle").click(function(e) {
+                                                        e.preventDefault();
+                                                        $("#wrapper").toggleClass("toggled");
+                                                        });
+                                                    </script>
+                                                    </html>

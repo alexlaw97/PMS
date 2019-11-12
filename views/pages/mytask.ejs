@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
     <head>
-            <% include ../partials/header.ejs %>
+      <% include ../partials/header.ejs %>
     </head>
     <body>
         <% include ../partials/navemp.ejs %>
         <div class="container">
-            <h2 style="text-align: center">Project List</h2>
+            <h2 style="text-align: center">Task List</h2>
                     <div class="table table-striped" id="proj_table" align="center">
                             <!-- Search form -->
                             <div id="search_project" align="center"></div>
@@ -14,7 +14,8 @@
                                 <thead>
                                   <th>Project Id</th>
                                   <th>Project Title</th>
-                                  <th>Deadline</th>
+                                  <th>Session Deadline </th>
+                                  <th>Project Deadline</th>
                                   <th>Status</th>                   
                                 </thead>
                                 <tbody>    
@@ -24,7 +25,16 @@
                                           <form action="status" method="POST">
                                           <td><input class="form-control-plaintext" type="text" name="projectid" value="<%= project[x].Project_id %>" readonly></td>
                                           <td><%= project[x].Project_title %></td>
-                                          <td class="duration"><%= duration[x] %> Days</td>
+                                          <%if(estimate[x] < 1){%>
+                                            <td class="duration">Expired</td>
+                                          <%}else{%>
+                                            <td class="duration"><%= estimate[x] %> Days</td>
+                                          <%}%>
+                                          <%if(duration[x] < 1){%>
+                                            <td class="duration">Expired</td>
+                                          <%}else{%>
+                                            <td class="duration"><%= duration[x] %> Days</td>
+                                          <%}%>
                                           <td><%= project[x].Status%></td>
                                           </form>
                                         </tr>
