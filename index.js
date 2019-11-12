@@ -1,16 +1,16 @@
 const express = require('express')
 const session = require('express-session')
-const flash = require('express-flash-notification');
-const cookieParser = require('cookie-parser');
 const path = require('path')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const axios = require('axios')
+const notifier = require('node-notifier');
+var nodemailer = require('nodemailer');
 const app = express();
 var ps =[];
-var totsks = [];
-
-
+var dealer = [];
+var username = 'contributor477@gmail.com';
+var password = 'Contributor123~';
 const db = "mongodb+srv://admin:abc0123@cluster0-k1y0a.mongodb.net/pms?retryWrites=true&w=majority";
 
 const PORT = process.env.PORT || 5000
@@ -33,7 +33,6 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-app.use(flash());
 
 // Load Login Page
 app.get('/',(req, res) => {
@@ -244,14 +243,15 @@ app.post('/newproj' , (req, res) => {
     .catch((error) => {
       console.log(error);
     })
+    insertnotice();
     res.redirect('back');
   })
 
   // Employer chart diagram
   app.get('/employerchart',(req, res) => {
     var emp = require('./Empdb');
-    var task = require('./taskdb');
     var persondept = req.session.department;
+    var task = require('./taskdb');
     var personid = req.session.pid;
     emp.find({
       "Department" : persondept
@@ -271,11 +271,157 @@ app.post('/newproj' , (req, res) => {
 
 //Main page of Employer Page (Nav Page)
 app.get('/mainemp',(req, res) => {
+  var proj = require('./Projdb');
   var personid = req.session.pid;
   var emp = require('./Empdb');
   var dept = req.session.department;
   var personname = req.session.name;
   var personpos = req.session.position;
+  var personid = req.session.pid;
+
+  if(dept == "Production"){
+    proj.find({
+      "Production" : personid,
+      "Status" : "Installation Phase"
+    })
+    .then((response) => {
+      for(var x =0; x <response.length; x++){
+        title = response[x].Project_title;
+        date2 = response[x].Deadline;
+        date = new Date();
+        date4 = new Date();
+        days = 5;
+        date3 = response[x].Ins_start;
+         // add estimate day
+        date4.setDate(date3.getDate() + days);
+        let Difference2 = Math.abs(date4.getTime() - date.getTime());
+        var different2 = Math.ceil(Difference2 / (1000 * 3600 * 24));
+        let Difference = Math.abs(date2.getTime() - date.getTime());
+        var different = Math.ceil(Difference / (1000 * 3600 * 24));
+        if(different < 10){
+          // notifier.notify('Project '+title+' Left '+ different+' days');
+        }
+        if(different2 < 7 && different2 > 0){
+          notifier.notify('Project '+title+' Left '+ different2+' days'+'\nPlease make sure you finish this project as soon as possible!');
+        }
+        else if(different2 < 1){
+          notifier.notify('You had passed your deadline to complete your work. Please check with your manager now');
+        }
+      } 
+    })
+  }
+  else if(dept == "IT"){
+    proj.find({
+      "IT_Dept" : personid,
+      "Status" : "Software Phase"
+    })
+    .then((response) => {
+      for(var x =0; x <response.length; x++){
+        title = response[x].Project_title;
+        date2 = response[x].Deadline;
+        date = new Date();
+        date4 = new Date();
+        days = 5;
+        date3 = response[x].Ins_end;
+         // add estimate day
+        date4.setDate(date3.getDate() + days);
+        let Difference2 = Math.abs(date4.getTime() - date.getTime());
+        var different2 = Math.ceil(Difference2 / (1000 * 3600 * 24));
+        let Difference = Math.abs(date2.getTime() - date.getTime());
+        var different = Math.ceil(Difference / (1000 * 3600 * 24));
+        if(different2 < 7 && different2 > 0){
+          notifier.notify('Project '+title+' Left '+ different2+' days'+'\nPlease make sure you finish this project as soon as possible!');
+        }
+        else if(different2 < 1){
+          notifier.notify('You had passed your deadline to complete your work. Please check with your manager now');
+        }
+      } 
+    })
+  }
+  else if(dept == "Testing"){
+    proj.find({
+      "Testing_Dept" : personid,
+      "Status" : "Testing Phase"
+    })
+    .then((response) => {
+      for(var x =0; x <response.length; x++){
+        title = response[x].Project_title;
+        date2 = response[x].Deadline;
+        date = new Date();
+        date4 = new Date();
+        days = 5;
+        date3 = response[x].Soft_end;
+         // add estimate day
+        date4.setDate(date3.getDate() + days);
+        let Difference2 = Math.abs(date4.getTime() - date.getTime());
+        var different2 = Math.ceil(Difference2 / (1000 * 3600 * 24));
+        let Difference = Math.abs(date2.getTime() - date.getTime());
+        var different = Math.ceil(Difference / (1000 * 3600 * 24));
+        if(different2 < 7 && different2 > 0){
+          notifier.notify('Project '+title+' Left '+ different2+' days'+'\nPlease make sure you finish this project as soon as possible!');
+        }
+        else if(different2 < 1){
+          notifier.notify('You had passed your deadline to complete your work. Please check with your manager now');
+        }
+      } 
+    })
+  }
+  else if(dept == "Mass"){
+    proj.find({
+      "Mass_Dept" : personid,
+      "Status" : "Mass Phase"
+    })
+    .then((response) => {
+      for(var x =0; x <response.length; x++){
+        title = response[x].Project_title;
+        date2 = response[x].Deadline;
+        date = new Date();
+        date4 = new Date();
+        days = 20;
+        date3 = response[x].testing_end;
+         // add estimate day
+        date4.setDate(date3.getDate() + days);
+        let Difference2 = Math.abs(date4.getTime() - date.getTime());
+        var different2 = Math.ceil(Difference2 / (1000 * 3600 * 24));
+        let Difference = Math.abs(date2.getTime() - date.getTime());
+        var different = Math.ceil(Difference / (1000 * 3600 * 24));
+        if(different2 < 7 && different2 > 0){
+          notifier.notify('Project '+title+' Left '+ different2+' days'+'\nPlease make sure you finish this project as soon as possible!');
+        }
+        else if(different2 < 1){
+          notifier.notify('You had passed your deadline to complete your work. Please check with your manager now');
+        }
+      } 
+    })
+  }
+  else if(dept == "Quality Assurance"){
+    proj.find({
+      "Quality_Dept" : personid,
+      "Status" : "Quality Phase"
+    })
+    .then((response) => {
+      for(var x =0; x <response.length; x++){
+        title = response[x].Project_title;
+        date2 = response[x].Deadline;
+        date = new Date();
+        date4 = new Date();
+        days = 20;
+        date3 = response[x].mass_end;
+         // add estimate day
+        date4.setDate(date3.getDate() + days);
+        let Difference2 = Math.abs(date4.getTime() - date.getTime());
+        var different2 = Math.ceil(Difference2 / (1000 * 3600 * 24));
+        let Difference = Math.abs(date2.getTime() - date.getTime());
+        var different = Math.ceil(Difference / (1000 * 3600 * 24));
+        if(different2 < 7 && different2 > 0){
+          notifier.notify('Project '+title+' Left '+ different2+' days to reach the deadline'+'\nPlease make sure you finish this project as soon as possible!');
+        }
+        else if(different2 < 1){
+          notifier.notify('You had passed your deadline to complete your work. Please check with your manager now');
+        }
+      } 
+    })
+  }
   emp.find({
     "Emp_id" : personid
   })
@@ -297,6 +443,7 @@ app.get('/task',(req,res) => {
   var dept = req.session.department;
   var personname = req.session.name;
   var personpos = req.session.position;
+  countphase();
   proj.find()
   .then((response) => {
         emp.find().then((response2) => {
@@ -305,61 +452,84 @@ app.get('/task',(req,res) => {
             employerlist : response2,
             personame : personname,
             persondepart : dept,
-            personposition : personpos
+            personposition : personpos,
+            phase : ps
+
+
           });
         })
       })
     })
 
 //View Self Task List
-app.get('/mytask',(req,res) => {
+app.get('/mytask',loginSession,(req,res) => {
   var persondept = req.session.department;
   var proj = require('./Projdb');
   var personid = req.session.pid;
   var date,date2;
   var datarray = [];
+  var dataarray2 = [];
   var dept = req.session.department;
   var personname = req.session.name;
   var personpos = req.session.position;
   if(persondept == "Production"){
     proj.find({
-      "Production" : personid
-    })
-    .then((response) => {
-      console.log(response);
-      for(var x =0; x <response.length; x++){
-      date2 = response[x].Deadline;
-      date = new Date();
-      let Difference = Math.abs(date2.getTime() - date.getTime());
-      var different = Math.ceil(Difference / (1000 * 3600 * 24));
-      datarray.push(different);
-    } 
-     
-      res.render("pages/mytask",{
-        project : response,
-        duration : datarray,
-        personame : personname,
-        persondepart : dept,
-        personposition : personpos
-      });
-    })
-  }
-  else if(persondept == "IT"){
-    proj.find({
-      "IT_Dept" : personid
+      "Production" : personid,
+      "Status" : "Installation Phase"
     })
     .then((response) => {
       for(var x =0; x <response.length; x++){
         date2 = response[x].Deadline;
         date = new Date();
+        date4 = new Date();
+        days = 5;
+        date3 = response[x].Ins_start;
+         // add estimate day
+        date4.setDate(date3.getDate() + days);
+        let Difference2 = Math.abs(date4.getTime() - date.getTime());
+        var different2 = Math.ceil(Difference2 / (1000 * 3600 * 24));
         let Difference = Math.abs(date2.getTime() - date.getTime());
         var different = Math.ceil(Difference / (1000 * 3600 * 24));
         datarray.push(different);
+        dataarray2.push(different2);
       } 
+        res.render("pages/mytask",{
+          project : response,
+          duration : datarray,
+          estimate : dataarray2,
+          personame : personname,
+          persondepart : dept,
+          personposition : personpos
+        });
+    })
+  }
+  else if(persondept == "IT"){
+    proj.find({
+      "IT_Dept" : personid,
+      "Status" : "Software Phase"
+    })
+    .then((response) => {
+      for(var x =0; x <response.length; x++){
+        date2 = response[x].Deadline;
+        date = new Date();
+        date4 = new Date();
+        days = 5;
+        date3 = response[x].Ins_end;
+         // add estimate day
+        date4.setDate(date3.getDate() + days);
+        let Difference2 = Math.abs(date4.getTime() - date.getTime());
+        var different2 = Math.ceil(Difference2 / (1000 * 3600 * 24));
+        let Difference = Math.abs(date2.getTime() - date.getTime());
+        var different = Math.ceil(Difference / (1000 * 3600 * 24));
+        datarray.push(different);
+        dataarray2.push(different2);
+      } 
+      
        
         res.render("pages/mytask",{
           project : response,
           duration : datarray,
+          estimate : dataarray2,
           personame : personname,
           persondepart : dept,
           personposition : personpos
@@ -368,20 +538,30 @@ app.get('/mytask',(req,res) => {
   }
   else if(persondept == "Testing"){
     proj.find({
-      "Testing_Dept" : personid
+      "Testing_Dept" : personid,
+      "Status" : "Testing Phase"
     })
     .then((response) => {
       for(var x =0; x <response.length; x++){
         date2 = response[x].Deadline;
         date = new Date();
+        date4 = new Date();
+        days = 5;
+        date3 = response[x].Soft_end;
+         // add estimate day
+        date4.setDate(date3.getDate() + days);
+        let Difference2 = Math.abs(date4.getTime() - date.getTime());
+        var different2 = Math.ceil(Difference2 / (1000 * 3600 * 24));
         let Difference = Math.abs(date2.getTime() - date.getTime());
         var different = Math.ceil(Difference / (1000 * 3600 * 24));
         datarray.push(different);
+        dataarray2.push(different2);
       } 
        
         res.render("pages/mytask",{
           project : response,
           duration : datarray,
+          estimate : dataarray2,
           personame : personname,
           persondepart : dept,
           personposition : personpos
@@ -390,20 +570,30 @@ app.get('/mytask',(req,res) => {
   }
   else if(persondept == "Mass"){
     proj.find({
-      "Mass_Dept" : personid
+      "Mass_Dept" : personid,
+      "Status" : "Mass Phase"
     })
     .then((response) => {
       for(var x =0; x <response.length; x++){
         date2 = response[x].Deadline;
         date = new Date();
+        date4 = new Date();
+        days = 20;
+        date3 = response[x].testing_end;
+         // add estimate day
+        date4.setDate(date3.getDate() + days);
+        let Difference2 = Math.abs(date4.getTime() - date.getTime());
+        var different2 = Math.ceil(Difference2 / (1000 * 3600 * 24));
         let Difference = Math.abs(date2.getTime() - date.getTime());
         var different = Math.ceil(Difference / (1000 * 3600 * 24));
         datarray.push(different);
+        dataarray2.push(different2);
       } 
        
         res.render("pages/mytask",{
           project : response,
           duration : datarray,
+          estimate : dataarray2,
           personame : personname,
           persondepart : dept,
           personposition : personpos
@@ -412,20 +602,30 @@ app.get('/mytask',(req,res) => {
   }
   else if(persondept == "Quality Assurance"){
     proj.find({
-      "Quality_Dept" : personid
+      "Quality_Dept" : personid,
+      "Status" : "Quality Phase"
     })
     .then((response) => {
       for(var x =0; x <response.length; x++){
         date2 = response[x].Deadline;
         date = new Date();
+        date4 = new Date();
+        days = 20;
+        date3 = response[x].mass_end;
+         // add estimate day
+        date4.setDate(date3.getDate() + days);
+        let Difference2 = Math.abs(date4.getTime() - date.getTime());
+        var different2 = Math.ceil(Difference2 / (1000 * 3600 * 24));
         let Difference = Math.abs(date2.getTime() - date.getTime());
         var different = Math.ceil(Difference / (1000 * 3600 * 24));
         datarray.push(different);
+        dataarray2.push(different2);
       } 
        
         res.render("pages/mytask",{
           project : response,
           duration : datarray,
+          estimate : dataarray2,
           personame : personname,
           persondepart : dept,
           personposition : personpos
@@ -451,47 +651,51 @@ app.get('/psen', loginSession, (req, res) => {
   var dept = req.session.department;
   var personname = req.session.name;
   var personpos = req.session.position;
+  var projtitle = [];
   proj.find({})
   .then((response) => {
     for(x=0;x<response.length;x++)
     {
       // console.log(personid);
       projecid = response[x].Project_id;
-      if(x < 1)
-      {  
-        if(response[x].Status == "Installation Phase" && response[x].Production == personid)
-        {
-        proj1.push(projecid);
-        }
-        else if(response[x].Status == "Software Phase" && response[x].IT_Dept == personid)
-        {
-          proj1.push(projecid);
-          }
-          else if(response[x].Status == "Testing Phase" && response[x].Testing_Dept == personid)
-          {
-            proj1.push(projecid);
-            }
-            else if(response[x].Status == "Mass Phase" && response[x].Mass_Dept == personid)
-            {
-              proj1.push(projecid);
-              }
-              else if(response[x].Status == "Quality Phase" && response[x].Quality_Dept == personid)
-              {
-                proj1.push(projecid);
-                }
-                else if(response[x].Status == "Shipping Phase" && response[x].Ship_Dept == personid)
-                {
-                  proj1.push(projecid);
-                  }
-        // console.log("proj1 ",proj1);
-      }
-      else
-      {
+      
+      // if(x < 1)
+      // {  
+      //   if(response[x].Status == "Installation Phase" && response[x].Production == personid)
+      //   {
+      //   proj1.push(projecid);
+      //   projtitle.push(response[x].Project_title);
+      //   }
+      //   else if(response[x].Status == "Software Phase" && response[x].IT_Dept == personid)
+      //   {
+      //     proj1.push(projecid);
+      //     }
+      //     else if(response[x].Status == "Testing Phase" && response[x].Testing_Dept == personid)
+      //     {
+      //       proj1.push(projecid);
+      //       }
+      //       else if(response[x].Status == "Mass Phase" && response[x].Mass_Dept == personid)
+      //       {
+      //         proj1.push(projecid);
+      //         }
+      //         else if(response[x].Status == "Quality Phase" && response[x].Quality_Dept == personid)
+      //         {
+      //           proj1.push(projecid);
+      //           }
+      //           else if(response[x].Status == "Shipping Phase" && response[x].Ship_Dept == personid)
+      //           {
+      //             proj1.push(projecid);
+      //             }
+      //   // console.log("proj1 ",proj1);
+      // }
+      // else
+      // {
         if(response[x].Status == "Installation Phase" && response[x].Production == personid)
         {
         // console.log("proj2 ",proj2);
-        proj2.push(projecid);
-        Array.prototype.push.apply(proj1, proj2);
+        proj1.push(projecid);
+        // Array.prototype.push.apply(proj1, proj2);
+        projtitle.push(response[x].Project_title);
         }
         else if(response[x].Status == "Software Phase" && response[x].IT_Dept == personid)
         {
@@ -518,7 +722,7 @@ app.get('/psen', loginSession, (req, res) => {
                   proj2.push(projecid);
                   Array.prototype.push.apply(proj1, proj2);
                   }
-      }
+      // }
       
     }
     if(persondept == "IT")
@@ -544,6 +748,8 @@ app.get('/psen', loginSession, (req, res) => {
       .then((response2) => {
         res.render("pages/employer",{
           requirement : response2,
+          title : projtitle,
+          projid : proj1,
           personame : personname,
           persondepart : dept,
           personposition : personpos
@@ -598,29 +804,32 @@ app.get('/psen', loginSession, (req, res) => {
 
     else if(persondept == "Shipment")
     {
+      
       // console.log("asd");
       // res.render("pages/shipping");
       proj.find({
-        "Project_id" :proj1
+        "Project_id" :proj2
       })
       .then((response2) => {
-          var deal =  [];
+         
           for(var x = 0; x < response2.length; x++){
-            deal.push(response2[x].Dealer);
-          }
-          add.find({
-            "Name" : deal
-          })
-          .then((response3) => {
+            add.findOne({
+              "Name" : response[x].Dealer
+            })
+            .then((response3) => {
+              setdealer(response3);
+          });
           
-            res.render("pages/shipping",{
-              project : response2,
-              projdealer : response3,
-              personame : personname,
-              persondepart : dept,
-              personposition : personpos
-          })
-        });
+      }
+      var dlnm = getdealer();
+      console.log(dlnm);
+        res.render("pages/shipping",{
+          project : response2,
+          projdealer : dealer,
+          personame : personname,
+          persondepart : dept,
+          personposition : personpos
+      })
       })
     }
   })
@@ -795,6 +1004,7 @@ app.get('/split', loginSession, (req, res) => {
        
       })
       .catch((error) => {
+        passwrongnotice();
         console.log('user not found');
         res.redirect('/');
         return false;
@@ -814,21 +1024,79 @@ app.get('/split', loginSession, (req, res) => {
 
 // Assigned employer id into Project Collection
 app.post('/update/id' ,(req, res) => {
-  console.log('Update');
   var emp_id = req.body.selected;
   var proj = require('./Projdb');
-  proj.updateOne({
-    "Project_id":req.body.id
-  },
-  {
-    $set:{
-    "Emp_id" : emp_id,
-    "Status" : "Progressing"
-    }
-  },
-  function(result){
-    res.redirect("./pmng")
-  });
+  var dept = req.session.department;
+  if(dept == "Production"){
+    proj.updateOne({
+      "Project_id":req.body.id
+    },
+    {
+      $set:{
+      "Production" : emp_id
+      }
+    },
+    function(result){
+      updatenotice();
+      res.redirect("/pmng")
+    });
+  }
+  else if(dept == "IT"){
+    proj.updateOne({
+      "Project_id":req.body.id
+    },
+    {
+      $set:{
+      "IT_Dept" : emp_id
+      }
+    },
+    function(result){
+      updatenotice();
+      res.redirect("/pmng")
+    });
+  }
+  else if(dept == "Testing"){
+    proj.updateOne({
+      "Project_id":req.body.id
+    },
+    {
+      $set:{
+      "Testing_Dept" : emp_id
+      }
+    },
+    function(result){
+      updatenotice();
+      res.redirect("/pmng")
+    });
+  }
+  else if(dept == "Mass"){
+    proj.updateOne({
+      "Project_id":req.body.id
+    },
+    {
+      $set:{
+      "Mass_Dept" : emp_id
+      }
+    },
+    function(result){
+      updatenotice();
+      res.redirect("/pmng")
+    });
+  }
+  else if(dept == "Quality Assurance"){
+    proj.updateOne({
+      "Project_id":req.body.id
+    },
+    {
+      $set:{
+      "Quality_Dept" : emp_id
+      }
+    },
+    function(result){
+      updatenotice();
+      res.redirect("/pmng")
+    });
+  }
 })
 
 // Update Progress in Requirement Table
@@ -842,14 +1110,7 @@ app.post('/Req',(req, res) => {
   var personid = req.session.pid;
   var part = req.body.parts;
   var id = req.body.reqid;
-  console.log(id);
-  console.log(part);
-  // req_tbl.updateOne({
-  //   "Req_id" : "8"
-  // },
-  // {
-  //   "Screen" : "1"
-  // });
+
   switch(part){
     case "Screen":
         req_tbl.updateOne({
@@ -861,6 +1122,7 @@ app.post('/Req',(req, res) => {
           }
         },
         function(result){
+          updatenotice();
           console.log("Update Successful");
           
         });
@@ -876,6 +1138,7 @@ app.post('/Req',(req, res) => {
           }
         },
         function(result){
+          updatenotice();
           console.log("Update Successful");
         });
         break;
@@ -890,6 +1153,7 @@ app.post('/Req',(req, res) => {
           }
         },
         function(result){
+          updatenotice();
           console.log("Update Successful");
         });
         break;
@@ -904,6 +1168,7 @@ app.post('/Req',(req, res) => {
           }
         },
         function(result){
+          updatenotice();
           console.log("Update Successful");
         });
         break;
@@ -918,6 +1183,7 @@ app.post('/Req',(req, res) => {
           }
         },
         function(result){
+          updatenotice();
           console.log("Update Successful");
         });
         break;
@@ -932,6 +1198,7 @@ app.post('/Req',(req, res) => {
           }
         },
         function(result){
+          updatenotice();
           console.log("Update Successful");
         });
         break;
@@ -946,6 +1213,7 @@ app.post('/Req',(req, res) => {
           }
         },
         function(result){
+          updatenotice();
           console.log("Update Successful");
         });
         break;
@@ -960,6 +1228,7 @@ app.post('/Req',(req, res) => {
             }
           },
           function(result){
+            updatenotice();
             console.log("Update Successful");
           });
           break;
@@ -974,6 +1243,7 @@ app.post('/Req',(req, res) => {
             }
           },
           function(result){
+            updatenotice();
             console.log("Update Successful");
           });
           break;
@@ -1027,6 +1297,7 @@ app.post('/Req',(req, res) => {
                           }
                         },
                         function(result3){
+                          updatenotice();
                           console.log("Update Success");
                         })
                       })
@@ -1036,26 +1307,6 @@ app.post('/Req',(req, res) => {
   }
 
   res.redirect('back');
-
-  // function(result){
-  //   console.log(result);
-  //   res.redirect('/psen');
-  // })
-  // .then((response) =>{
-  //   console.log(response);
-  // }).catch((error) => {
-  //   console.log(error);
-  // })
-  // function update(){
-  //   req_tbl.updateOne({
-  //     "Req_id": id
-  //   },
-  //   {
-  //     $set:{
-  //     part : "1"
-  //     }
-  //   },
-  // }
 });
 
 //Update Status Software / Mass Production
@@ -1065,6 +1316,7 @@ app.post('/status' , (req, res) => {
   var prod_tbl = require('./prodDb');
   var dev_tbl = require('./devdb');
   var task_tbl = require('./taskdb');
+  var req_tbl = require('./reqdb');
   var projid = req.body.projectid;
   var persondept = req.session.department;
   var personid = req.session.pid;
@@ -1112,6 +1364,7 @@ app.post('/status' , (req, res) => {
               }
             },
             function(result3){
+              updatenotice();
               console.log("Update Success");
             })
           })
@@ -1161,6 +1414,7 @@ app.post('/status' , (req, res) => {
               }
             },
             function(result3){
+              updatenotice();
               console.log("Update Success");
             })
           })
@@ -1203,7 +1457,27 @@ app.post('/status' , (req, res) => {
               }
             },
             function(result3){
-              console.log("Update Success");
+              req_tbl.updateOne({
+                "Req_id" : projid
+              },
+              {
+                $set:{
+                  "Screen" : "0",
+                  "Battery" : "0",
+                  "Processor" : "0",
+                  "Camera" : "0",
+                  "Memory" : "0",
+                  "Inner_Body" : "0",
+                  "Vibrator" : "0",
+                  "Speaker" : "0",
+                  "Motherboard" : "0",
+                  "Button" : "0"
+                }
+              },
+              function(result4){
+                updatenotice();
+                console.log("Update Success");
+              })
             })
           })
         });
@@ -1249,6 +1523,7 @@ app.post('/status' , (req, res) => {
               }
             },
             function(result3){
+              updatenotice();
               console.log("Update Success");
             })
           })
@@ -1332,6 +1607,7 @@ app.post('/status' , (req, res) => {
                     }
                   },
                   function(result3){
+                    updatenotice();
                     console.log("Update Success");
                   })
                 })
@@ -1376,6 +1652,7 @@ app.post('/status' , (req, res) => {
                 }
               },
               function(result3){
+                updatenotice();
                 console.log("Update Success");
               })
             })
@@ -1434,9 +1711,8 @@ app.post('/newemp' , (req, res) => {
         })
       })
     })
-  res.redirect('/newemp',{
-    success : "1"
-  });
+  insertnotice();
+  res.redirect('/newemp');
   })
   .catch((error) => {
     console.log(error);
@@ -1456,7 +1732,7 @@ app.post('/comparedate' , (req, res) => {
   .then((response) => {
     var countp1, countp2, countp3, countp4, countp5, totalinsert, totalsof, totaltest, totalmas, totalquality, averageinsert, averagesoftware, averagequality, averagemass, averagetesting;
     countp1 = countp2 = countp3 = countp4 = countp5 = totalinsert = totalsof = totaltest = totalmas = totalquality = averageinsert = averagesoftware = averagemass = averagetesting = averagequality = 0;
-    for(var x = 0; x < response.length; x++){
+    for(var x = 0; x < response.length; x++){ 
       insert1 = response[x].Ins_start;
       insert2 = response[x].Ins_end;
       quantity = response[x].Quantity;
@@ -1494,7 +1770,7 @@ app.post('/comparedate' , (req, res) => {
             else{
               let masDifference = Math.abs(mass.getTime() - test.getTime());
               var differentmas = Math.ceil(masDifference / (1000 * 3600));
-              totalmas += differentmas; 
+              totalmas += differentmas/quantity; 
               countp4++;
               if(quality == "" || mass == ""){
 
@@ -1502,7 +1778,7 @@ app.post('/comparedate' , (req, res) => {
               else{
               let qualityDifference = Math.abs(quality.getTime() - mass.getTime());
               var differentquality = Math.ceil(qualityDifference / (1000 * 3600));
-              totalquality += differentquality;
+              totalquality += differentquality/quantity;
               countp5++;
               }
             }
@@ -1513,8 +1789,8 @@ app.post('/comparedate' , (req, res) => {
     averageinsert = totalinsert/ countp1; 
     averagesoftware = totalsof/ countp2; 
     averagetesting = totaltest/ countp3; 
-    averagemass = (totalmas/ countp4)/quantity;
-    averagequality = (totalquality/ countp5)/quantity; 
+    averagemass = totalmas/ countp4;
+    averagequality = totalquality/ countp5; 
     avgtime.push(averageinsert,averagesoftware,averagetesting,averagemass,averagequality);
     proj_tbl.find({
       "Project_id" : projectid
@@ -1524,6 +1800,7 @@ app.post('/comparedate' , (req, res) => {
         for(var x = 0; x < response2.length; x++){
           curins = response2[x].Ins_start;
           curins2 = response2[x].Ins_end;
+          quant2 = response2[x].Quantity;
           if(curins == "" ||  curins2 == ""){
             differentins = 0;
           }
@@ -1556,19 +1833,22 @@ app.post('/comparedate' , (req, res) => {
           }
           else{
           let masDifference = Math.abs(curmas.getTime() - curtest.getTime());
-          var differentmas = Math.ceil(masDifference / (1000 * 3600)/quantity);
+          var differentmas = Math.ceil(masDifference / (1000 * 3600));
+          var totmas = Math.ceil(differentmas/quant2);
+          
           }
 
           curquality = response2[x].quality_end;
           if(curquality == "" || curmas == ""){
-            let differentqua = 0;
+            differentqua = 0;
           }
           else{
           let qualityDifference = Math.abs(curquality.getTime() - curmas.getTime());
-          var differentqua = Math.ceil(qualityDifference / (1000 * 3600)/quantity);
+          var differentqua = Math.ceil(qualityDifference / (1000 * 3600));
+          var totqua = Math.ceil(differentqua/quant2);
           }
           
-          projduration.push(differentins,differentsof,differenttest,differentmas,differentqua);
+          projduration.push(differentins,differentsof,differenttest,totmas,totqua);
         }
         res.render("pages/chart", {
           average : avgtime,
@@ -1685,9 +1965,81 @@ function countphase(){
           })
         }) 
       }
-  function duration(){
+// Function for notification of Insert Successful Message
+function insertnotice(){
+  notifier.notify(
+    {
+      title: 'System Assistant',
+      message: 'Insert Successful!',
+      icon: path.join(__dirname, '1.jpg'), // Absolute path (doesn't work on balloons)
+      sound: true, // Only Notification Center or Windows Toasters
+      wait: true // Wait with callback, until user action is taken against notification, does not apply to Windows Toasters as they always wait
+    },
+    function(err, response) {
+      // Response is response from notification
+    }
+  );
+}
+// Function of Update Successful notification message
+function updatenotice(){
+  notifier.notify(
+    {
+      title: 'System Assistant',
+      message: 'Update Successful!',
+      icon: path.join(__dirname, '1.jpg'), // Absolute path (doesn't work on balloons)
+      sound: true, // Only Notification Center or Windows Toasters
+      wait: true // Wait with callback, until user action is taken against notification, does not apply to Windows Toasters as they always wait
+    },
+    function(err, response) {
+      // Response is response from notification
+    }
+  );
+}
 
-    return different;
-   
-  }
+// Function of Wrong Password notification message
+function passwrongnotice(){
+  notifier.notify(
+    {
+      title: 'System Assistant',
+      message: 'Wrong Password or Username! Please try again',
+      icon: path.join(__dirname, '1.jpg'), // Absolute path (doesn't work on balloons)
+      sound: true, // Only Notification Center or Windows Toasters
+      wait: true // Wait with callback, until user action is taken against notification, does not apply to Windows Toasters as they always wait
+    },
+    function(err, response) {
+      // Response is response from notification
+    }
+  );
+}
 
+function setdealer(name){
+
+  dealer.push(name);
+}
+
+function getdealer(){
+  return dealer;
+}
+// var transporter = nodemailer.createTransport({
+//   service: 'gmail',
+//   auth: {
+//     user: username,
+//     pass: password
+//   }
+// });
+
+// var mailOptions = {
+//   from: username,
+//   to: 'robotboss1997@gmail.com',
+//   subject: 'Warning ',
+//   text: "apbllablla"+ username +"  "
+// };
+
+// transporter.sendMail(mailOptions, function(error, info){
+//   if (error) {
+//     console.log(error);
+//   } else {
+//     console.log('Email sent: ' + info.response);
+    
+//   }
+// });
