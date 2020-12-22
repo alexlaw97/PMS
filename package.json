@@ -23,7 +23,7 @@
     "mongo": "^0.1.0",
     "mongodb": "^3.3.0",
     "mongoose": "^5.7.1",
-    "node-notifier": "^6.0.0",
+    "node-notifier": "^8.0.1",
     "nodemailer": "^6.3.1",
     "startbootstrap-simple-sidebar": "^5.1.1"
   },
